@@ -1,7 +1,7 @@
+import { Typography } from "@mui/material"
+
 export default function AppHeader() {
   return (
-    <header>
-      <h1>Sio-Serv</h1>
-    </header>
+    <Typography>Sio-Serv</Typography>
   )
 }

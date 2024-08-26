@@ -28,6 +28,9 @@ export default tseslint.config(
         allowConstantExport: true,
       }],
 
+      // Our rules
+      "@typescript-eslint/no-non-null-assertion": "off",
+
       // Stylistic rules
       "@stylistic/js/array-bracket-newline": ["error", "consistent"],
       "@stylistic/js/array-bracket-spacing": ["error", "never"],
