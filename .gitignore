@@ -3,3 +3,6 @@ dist
 node_modules
 
 # Our app
+keycloak-data
+minio-data
+sapporo_run

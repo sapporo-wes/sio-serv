@@ -1,0 +1,21 @@
+services:
+  keycloak:
+    # https://hub.docker.com/r/keycloak/keycloak/tags
+    image: quay.io/keycloak/keycloak:25.0.4
+    container_name: sio-serv-keycloak-dev
+    environment:
+      - KEYCLOAK_ADMIN=sio-serv-admin-user
+      - KEYCLOAK_ADMIN_PASSWORD=sio-serv-admin-password
+    volumes:
+      - ${PWD}/keycloak-data:/opt/keycloak/data
+    ports:
+      - 127.0.0.1:8080:8080
+    restart: on-failure
+    command: [ "start-dev" ]
+    networks:
+      - sio-serv-network
+
+networks:
+  sio-serv-network:
+    name: sio-serv-network
+    extenal: true

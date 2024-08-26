@@ -13,6 +13,13 @@ services:
     restart: on-failure
     working_dir: /app
     command: [ "sleep", "infinity" ]
+    networks:
+      - sio-serv-network
 
 volumes:
-  node_modules:
+  node_modules: {}
+
+networks:
+  sio-serv-network:
+    name: sio-serv-network
+    extenal: true

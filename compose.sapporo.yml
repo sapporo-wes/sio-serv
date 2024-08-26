@@ -1,0 +1,26 @@
+services:
+  sapporo:
+    image: ghcr.io/sapporo-wes/sapporo-service:2.0.2
+    container_name: sio-serv-sapporo-dev
+    volumes:
+      - ${PWD}/sapporo_config:/app/sapporo_config
+      - ${PWD}/sapporo_run:${PWD}/sapporo_run
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+    environment:
+      - SAPPORO_DEBUG=True
+      - SAPPORO_RUN_DIR=${PWD}/sapporo_run
+      - SAPPORO_SERVICE_INFO=/app/sapporo_config/service-info.json
+      - SAPPORO_RUN_SH=/app/sapporo_config/run.sh
+    ports:
+      - 127.0.0.1:1122:1122
+    restart: on-failure
+    working_dir: /app
+    command: [ "sapporo" ]
+    networks:
+      - sio-serv-network
+
+networks:
+  sio-serv-network:
+    name: sio-serv-network
+    extenal: true
