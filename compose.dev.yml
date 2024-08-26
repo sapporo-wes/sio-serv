@@ -1,0 +1,18 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    image: sio-serv-dev
+    container_name: sio-serv-dev
+    volumes:
+      - ${PWD}:/app
+      - node_modules:/app/node_modules
+    ports:
+      - 127.0.0.1:3000:3000
+    restart: on-failure
+    working_dir: /app
+    command: [ "sleep", "infinity" ]
+
+volumes:
+  node_modules:

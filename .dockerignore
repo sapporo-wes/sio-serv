@@ -1,0 +1,14 @@
+# Ignore everything
+**
+
+!eslint.config.js
+!LICENSE
+!package-lock.json
+!package.json
+!README.md
+!src
+!tests
+!tsconfig.app.json
+!tsconfig.json
+!tsconfig.node.json
+!vite.config.ts
