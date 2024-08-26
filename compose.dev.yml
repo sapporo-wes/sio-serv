@@ -22,4 +22,4 @@ volumes:
 networks:
   sio-serv-network:
     name: sio-serv-network
-    extenal: true
+    external: true
