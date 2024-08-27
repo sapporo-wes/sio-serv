@@ -20,5 +20,7 @@ export default defineConfig({
   },
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+    KEYCLOAK_REALM_URL: JSON.stringify(process.env.SIO_SERV_KEYCLOAK_REALM_URL || "http://localhost:8080/auth/realms/sio-serv"),
+    KEYCLOAK_CLIENT_ID: JSON.stringify(process.env.SIO_SERV_KEYCLOAK_CLIENT_ID || "sio-serv-spa"),
   },
 })

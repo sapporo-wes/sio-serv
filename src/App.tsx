@@ -1,9 +1,13 @@
+import { AuthProvider } from "react-oidc-context"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { colors } from "@mui/material"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { CssBaseline } from "@mui/material"
+import { oidcConfig } from "@/auth"
 import { RecoilRoot } from "recoil"
+import AuthCallback from "@/pages/AuthCallback"
+import AuthHelper from "@/components/AuthHelper"
 import Home from "@/pages/Home"
-import { colors } from "@mui/material"
 
 const themeConfig = createTheme({
   palette: {
@@ -26,9 +30,14 @@ function App() {
       <ThemeProvider theme={themeConfig}>
         <CssBaseline />
         <RecoilRoot>
-          <Routes>
-            <Route path="/" element={<Home />} />
-          </Routes>
+          <AuthProvider {...oidcConfig}>
+            <AuthHelper>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/auth/callback" element={<AuthCallback />} />
+              </Routes>
+            </AuthHelper>
+          </AuthProvider>
         </RecoilRoot>
       </ThemeProvider>
     </BrowserRouter>

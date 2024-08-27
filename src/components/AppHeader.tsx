@@ -1,41 +1,43 @@
-import { Typography, AppBar, Button, Box } from "@mui/material"
+import { Button } from "@mui/material"
 import { SxProps } from "@mui/system"
+import { useAuth } from "react-oidc-context"
+import AppHeaderBase from "@/components/AppHeaderBase"
 
 export interface AppHeaderProps {
   sx?: SxProps
 }
 
 export default function AppHeader({ sx }: AppHeaderProps) {
+  const auth = useAuth()
+
   return (
-    <AppBar position="static" sx={{
-      ...sx,
-      boxShadow: "none",
-      height: "64px",
-      display: "flex",
-      flexDirection: "row",
-      justifyContent: "space-between",
-      alignItems: "center",
-      color: "white",
-      bgcolor: "primary.dark",
-    }}>
-      <Box sx={{ ml: "1.5rem" }}>
-        <Typography
-          component="div"
-          sx={{
-            fontSize: "1.75rem",
-            letterSpacing: "0.25rem",
-            mb: "0.25rem",
-          }}
-          children="sio-serv"
-        />
-      </Box>
-      <Box sx={{ mr: "1.5rem" }}>
-        <Button
-          variant="outlined"
-          sx={{ color: "white", textTransform: "none", border: "1px solid white" }}
-          children="Sign In"
-        />
-      </Box>
-    </AppBar >
+    <AppHeaderBase
+      sx={sx}
+      rightContent={
+        auth.isAuthenticated ? (
+          <Button
+            variant="outlined"
+            sx={{
+              color: "white",
+              textTransform: "none",
+              border: "1px solid white",
+            }}
+            children="Sign Out"
+            onClick={() => auth.removeUser()}
+          />
+        ) : (
+          <Button
+            variant="outlined"
+            sx={{
+              color: "white",
+              textTransform: "none",
+              border: "1px solid white",
+            }}
+            children="Sign In"
+            onClick={() => auth.signinRedirect()}
+          />
+        )
+      }
+    />
   )
 }
