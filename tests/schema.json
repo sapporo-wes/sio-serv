@@ -1,0 +1,56 @@
+{
+  "type": "object",
+  "properties": {
+    "fastq_1": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "title": "Location of FASTQ file",
+          "description": "It should be a valid remote URL",
+          "default": "https://example.com/path/to/fastq_1.fq"
+        },
+        "class": {
+          "type": "string",
+          "const": "File",
+          "title": "CWL File class",
+          "description": "It must be a 'File', do not change it"
+        }
+      },
+      "required": [
+        "location",
+        "class"
+      ]
+    },
+    "fastq_2": {
+      "type": "object",
+      "properties": {
+        "location": {
+          "type": "string",
+          "title": "Location of FASTQ file",
+          "description": "It should be a valid remote URL"
+        },
+        "class": {
+          "type": "string",
+          "const": "File",
+          "title": "CWL File class",
+          "description": "It must be a 'File', do not change it"
+        }
+      },
+      "required": [
+        "location",
+        "class"
+      ]
+    },
+    "nthreads": {
+      "type": "integer",
+      "title": "Number of threads",
+      "description": "Number of threads to use for multi-threaded programs",
+      "default": 4
+    }
+  },
+  "required": [
+    "fastq_1",
+    "fastq_2"
+  ]
+}

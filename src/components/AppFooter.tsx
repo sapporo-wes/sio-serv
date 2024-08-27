@@ -11,7 +11,7 @@ export default function AppFooter({ sx }: AppFooterProps) {
       <Typography variant="body2" align="center" color="text.secondary">
         © 2003-{new Date().getFullYear()} Graduate School of Medicine and School of Medicine, Chiba University.
       </Typography>
-      <Typography variant="body2" align="center" color="text.secondary">
+      <Typography variant="body2" align="center" color="text.secondary" sx={{ letterSpacing: "0.1rem" }}>
         sio-serv {__APP_VERSION__}
       </Typography>
     </Box>

@@ -1,5 +1,6 @@
-import * as path from "path"
-import * as fs from "fs"
+import path from "path"
+import fs from "fs"
+import { JSONSchema } from "@/types"
 
 export const resolvePath = (p: string): string => {
   if (!path.isAbsolute(p)) {
@@ -10,4 +11,12 @@ export const resolvePath = (p: string): string => {
 
 export const existsFile = (p: string): boolean => {
   return fs.existsSync(p) && fs.statSync(p).isFile()
+}
+
+export const isObjectProps = (schema: JSONSchema): boolean => {
+  return schema.type === "object" && schema.properties !== undefined
+}
+
+export const loadJson = (p: string): Record<string, unknown> => {
+  return JSON.parse(fs.readFileSync(p, "utf8"))
 }
