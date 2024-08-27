@@ -1,4 +1,4 @@
-JSON Path	Title	Description	Type	Default	Required	Show in UI
+Parameter Key	Title	Description	UI Component Type	Default	Required	Editable
 fastq_1.location	Location of FASTQ file	It should be a valid remote URL	string	https://example.com/path/to/fastq_1.fq	true	true
 fastq_1.class	CWL File class	It must be a 'File', do not change it	string	File	true	true
 fastq_2.location	Location of FASTQ file	It should be a valid remote URL	string		true	true

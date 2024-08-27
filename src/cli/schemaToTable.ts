@@ -105,7 +105,7 @@ const schemaToTable = (schema: JSONSchema, parentPath = ""): TemplateTableRow[] 
 
 const tableToString = (rows: TemplateTableRow[], format: CliArgs["outputFormat"]): string => {
   const delimiter = format === "tsv" ? "\t" : ","
-  const header = ["JSON Path", "Title", "Description", "Type", "Default", "Required", "Show in UI"]
+  const header = ["Parameter Key", "Title", "Description", "UI Component Type", "Default", "Required", "Editable"]
   return [
     header.join(delimiter),
     ...rows.map(row => [row.jsonPath, row.title, row.description, row.type, row.default, row.required, true].join(delimiter)),
