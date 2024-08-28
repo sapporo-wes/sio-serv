@@ -12,6 +12,7 @@ services:
       - SAPPORO_RUN_DIR=${PWD}/sapporo_run
       - SAPPORO_SERVICE_INFO=/app/sapporo_config/service-info.json
       - SAPPORO_RUN_SH=/app/sapporo_config/run.sh
+      - SAPPORO_AUTH_CONFIG=/app/sapporo_config/auth_config.json
     ports:
       - 127.0.0.1:1122:1122
     restart: on-failure
