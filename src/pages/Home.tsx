@@ -17,7 +17,10 @@ export default function Home() {
             <CodeBlock language="json" codeString={JSON.stringify(auth.user, null, 2)} />
           </>
         ) : (
-          <h1>Home</h1>
+          <>
+            <h1>Home</h1>
+            {UI_TABLE_FILE_CONTENT}
+          </>
         )}
       </Container>
       <AppFooter />

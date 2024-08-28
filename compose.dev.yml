@@ -8,6 +8,9 @@ services:
     environment:
       - SIO_SERV_KEYCLOAK_REALM_URL=http://localhost:8080/realms/sio-serv
       - SIO_SERV_KEYCLOAK_CLIENT_ID=sio-serv-spa
+      - SIO_SERV_MINIO_ENDPOINT=http://localhost:9000
+      - SIO_SERV_SAPPORO_ENDPOINT=http://localhost:1122
+      - SIO_SERV_UI_TABLE_FILE=/app/tests/table.json
     volumes:
       - ${PWD}:/app
       - node_modules:/app/node_modules

@@ -1,6 +1,9 @@
 # node, ts, vite, etc.
 dist
 node_modules
+tsconfig.node.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 
 # Our app
 keycloak-data

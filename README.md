@@ -1,5 +1,20 @@
 # sio-serv
 
+- <https://hackmd.io/@suecharo/H1I5y65iR>
+  - 各認証系の設定法方
+
+## Development
+
+```bash=
+docker network create sio-serv-network
+docker compose -f compose.dev.yml up -d --build
+docker compose -f compose.sapporo.yml up -d
+docker compose -f compose.keycloak.yml up -d
+docker compose -f compose.minio.yml up -d
+
+docker compose -f compose.dev.yml exec app npm run dev
+```
+
 ## Discussion and FAQ
 
 - なぜ、jsonschema から直接 UI を生成しないのか
