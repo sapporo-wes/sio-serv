@@ -7,5 +7,5 @@
 
 ```bash=
 # At the root of the repository
-npm run schema-to-table -- -i ./tests/schema.json -o ./tests/table.tsv
+npm run schema-to-table -- -i ./tests/wf_params_schema.json -o ./tests/ui_table.tsv
 ```

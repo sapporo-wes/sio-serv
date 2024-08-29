@@ -20,6 +20,8 @@ export default function Home() {
           <>
             <h1>Home</h1>
             {UI_TABLE_FILE_CONTENT}
+            {WF_PARAMS_SCHEMA_FILE_CONTENT}
+            {RUN_REQUEST_FILE_CONTENT}
           </>
         )}
       </Container>

@@ -10,6 +10,8 @@ const loadSettingFiles = (): Plugin => {
       config.define = config.define || {};
       [
         "SIO_SERV_UI_TABLE_FILE",
+        "SIO_SERV_WF_PARAMS_SCHEMA_FILE",
+        "SIO_SERV_RUN_REQUEST_FILE",
       ].forEach((key) => {
         const file = process.env[key]
         if (file === undefined) {

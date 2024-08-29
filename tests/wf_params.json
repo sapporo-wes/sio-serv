@@ -1,8 +1,0 @@
-{
-  "fastq_1": {
-    "location": "https://raw.githubusercontent.com/sapporo-wes/sapporo-service/main/tests/resources/cwltool/ERR034597_1.small.fq.gz"
-  },
-  "fastq_2": {
-    "location": "https://raw.githubusercontent.com/sapporo-wes/sapporo-service/main/tests/resources/cwltool/ERR034597_2.small.fq.gz"
-  }
-}
