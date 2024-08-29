@@ -25,6 +25,5 @@ export default function AuthCallback() {
       </Container>
       <AppFooter />
     </Box>
-
   )
 }
