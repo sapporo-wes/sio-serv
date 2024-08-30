@@ -101,10 +101,6 @@ export const loadUITable = (uiTableContent: string): UITableRow[] => {
   }).filter((row) => row !== null)
 }
 
-export const loadSchema = (): JSONSchema => {
-  return JSON.parse(WF_PARAMS_SCHEMA_FILE_CONTENT)
-}
-
 export const validateInputtedUITable = (inputtedUITable: UITableRow[], uiTableFromSchema: UITableRow[]) => {
   // The UI Table is intended to assist in the display within the UI, but the final workflow parameters must adhere to the schema.
   // Therefore, the edited content of the UI Table needs to be validated to ensure it complies with the original schema.

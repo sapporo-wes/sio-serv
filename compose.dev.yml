@@ -23,6 +23,7 @@ services:
     command: [ "sleep", "infinity" ]
     networks:
       - sio-serv-network
+    init: true
 
 volumes:
   node_modules: {}

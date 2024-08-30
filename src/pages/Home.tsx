@@ -3,14 +3,16 @@ import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
 import CodeBlock from "@/components/CodeBlock"
 import { useAuth } from "react-oidc-context"
-import { loadUITable, loadSchema, schemaToUITable, validateInputtedUITable, convertToSchemaForForm } from "@/lib/configs"
+import { useRecoilValue } from "recoil"
+import { uiTableAtom } from "@/store/configs"
+import { convertToSchemaForForm } from "@/lib/configs"
+import Form from "@rjsf/mui"
+import validator from "@rjsf/validator-ajv8"
 
 export default function Home() {
   const auth = useAuth()
-  const inputtedUITable = loadUITable(UI_TABLE_FILE_CONTENT)
-  const schema = loadSchema()
-  validateInputtedUITable(inputtedUITable, schemaToUITable(schema))
-  const schemaForForm = convertToSchemaForForm(inputtedUITable)
+  const uiTable = useRecoilValue(uiTableAtom)
+  const schemaForForm = convertToSchemaForForm(uiTable)
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -24,7 +26,7 @@ export default function Home() {
         ) : (
           <>
             <h1>Home</h1>
-            {JSON.stringify(schemaForForm, null, 2)}
+            <Form schema={schemaForForm} validator={validator} />
           </>
         )}
       </Container>
