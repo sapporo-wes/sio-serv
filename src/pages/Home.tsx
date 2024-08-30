@@ -3,9 +3,14 @@ import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
 import CodeBlock from "@/components/CodeBlock"
 import { useAuth } from "react-oidc-context"
+import { loadUITable, loadSchema, schemaToUITable, validateInputtedUITable, convertToSchemaForForm } from "@/schema"
 
 export default function Home() {
   const auth = useAuth()
+  const inputtedUITable = loadUITable()
+  const schema = loadSchema()
+  validateInputtedUITable(inputtedUITable, schemaToUITable(schema))
+  const schemaForForm = convertToSchemaForForm(inputtedUITable)
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
@@ -19,9 +24,7 @@ export default function Home() {
         ) : (
           <>
             <h1>Home</h1>
-            {UI_TABLE_FILE_CONTENT}
-            {WF_PARAMS_SCHEMA_FILE_CONTENT}
-            {RUN_REQUEST_FILE_CONTENT}
+            {JSON.stringify(schemaForForm, null, 2)}
           </>
         )}
       </Container>

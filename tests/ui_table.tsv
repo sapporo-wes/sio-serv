@@ -3,4 +3,4 @@ fastq_1.location	Location of FASTQ file	It should be a valid remote URL	string	h
 fastq_1.class	CWL File class	It must be a 'File', do not change it	string	File	true	true
 fastq_2.location	Location of FASTQ file	It should be a valid remote URL	string		true	true
 fastq_2.class	CWL File class	It must be a 'File', do not change it	string	File	true	true
-nthreads	Number of threads	Number of threads to use for multi-threaded programs	integer		false	true
+nthreads	Number of threads	Number of threads to use for multi-threaded programs	number	4	false	true

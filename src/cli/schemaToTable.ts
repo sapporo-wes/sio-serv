@@ -1,7 +1,8 @@
 import { fileURLToPath } from "url"
 import { parseArgs } from "util"
-import { resolvePath, existsFile, isObjectProps, loadJson } from "@/cli/utils"
-import { JSONSchema, TemplateTableRow } from "@/types"
+import { resolvePath, existsFile, loadJson } from "@/cli/utils"
+import { schemaToUITable, UI_TABLE_HEADER } from "@/schema"
+import { JSONSchema, UITableRow } from "@/types"
 import fs from "fs"
 
 interface CliArgs {
@@ -67,55 +68,18 @@ const parseCliArgs = (args: string[]): CliArgs => {
   return { inputPath, outputPath, outputFormat, pipe: values.pipe! }
 }
 
-const schemaToTable = (schema: JSONSchema, parentPath = ""): TemplateTableRow[] => {
-  const rows: TemplateTableRow[] = []
-
-  if (isObjectProps(schema)) {
-    const requiredFields = new Set(schema.required || [])
-    for (const [key, value] of Object.entries(schema.properties!) as [string, JSONSchema][]) {
-      const jsonPath = parentPath !== "" ? `${parentPath}.${key}` : key
-      if (value.type !== "object") {
-        if (value.type === "null") {
-          continue // TODO: handle null type, if needed
-        }
-        // TODO: handle type written as array, e.g. ["string", "number"]
-        const type = value.type as TemplateTableRow["type"]
-        const required = requiredFields.has(key)
-        const defaultValue = (() => {
-          const val = value.default || value.const || undefined
-          if (val === undefined) return ""
-          if (type === "string") return String(val)
-          if (type === "number") return Number(val)
-          if (type === "boolean") return Boolean(val)
-          if (type === "array") return JSON.stringify(val)
-          return ""
-        })()
-        const title = value.title || ""
-        const description = value.description || ""
-
-        rows.push({ jsonPath, type, required, default: defaultValue, title, description })
-      } else {
-        rows.push(...schemaToTable(value, jsonPath))
-      }
-    }
-  }
-
-  return rows
-}
-
-const tableToString = (rows: TemplateTableRow[], format: CliArgs["outputFormat"]): string => {
+const tableToString = (rows: UITableRow[], format: CliArgs["outputFormat"]): string => {
   const delimiter = format === "tsv" ? "\t" : ","
-  const header = ["Parameter Key", "Title", "Description", "UI Component Type", "Default", "Required", "Editable"]
   return [
-    header.join(delimiter),
-    ...rows.map(row => [row.jsonPath, row.title, row.description, row.type, row.default, row.required, true].join(delimiter)),
+    UI_TABLE_HEADER.join(delimiter),
+    ...rows.map(row => [row.jsonPath, row.title, row.description, row.type, row.default, row.required, row.editable].join(delimiter)),
   ].join("\n")
 }
 
 const main = () => {
   const args = parseCliArgs(process.argv.slice(2))
   const schema = loadJson(args.inputPath) as JSONSchema
-  const tableRows = schemaToTable(schema)
+  const tableRows = schemaToUITable(schema)
   const tableString = tableToString(tableRows, args.outputFormat)
   if (args.pipe) {
     console.log(tableString)

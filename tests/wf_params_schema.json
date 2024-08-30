@@ -43,7 +43,7 @@
       ]
     },
     "nthreads": {
-      "type": "integer",
+      "type": "number",
       "title": "Number of threads",
       "description": "Number of threads to use for multi-threaded programs",
       "default": 4
