@@ -1,4 +1,4 @@
-import { UITableRow, UITableRowSchema, JSONSchema } from "@/types"
+import { UITableRow, UITableRowSchema, JSONSchema } from "@/types/configs"
 import metaSchema from "ajv/lib/refs/json-schema-draft-07.json"
 import Ajv from "ajv"
 
@@ -67,8 +67,8 @@ const isTsvFile = (headerRow: string): boolean => {
   return headerRow.includes("\t")
 }
 
-export const loadUITable = (): UITableRow[] => {
-  const row = UI_TABLE_FILE_CONTENT.split("\n")
+export const loadUITable = (uiTableContent: string): UITableRow[] => {
+  const row = uiTableContent.split("\n")
   const delimiter = isTsvFile(row[0]) ? "\t" : ","
   const header = row[0].split(delimiter)
   header.forEach((col, i) => {

@@ -3,11 +3,11 @@ import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
 import CodeBlock from "@/components/CodeBlock"
 import { useAuth } from "react-oidc-context"
-import { loadUITable, loadSchema, schemaToUITable, validateInputtedUITable, convertToSchemaForForm } from "@/schema"
+import { loadUITable, loadSchema, schemaToUITable, validateInputtedUITable, convertToSchemaForForm } from "@/lib/configs"
 
 export default function Home() {
   const auth = useAuth()
-  const inputtedUITable = loadUITable()
+  const inputtedUITable = loadUITable(UI_TABLE_FILE_CONTENT)
   const schema = loadSchema()
   validateInputtedUITable(inputtedUITable, schemaToUITable(schema))
   const schemaForForm = convertToSchemaForForm(inputtedUITable)

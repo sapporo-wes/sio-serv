@@ -14,6 +14,10 @@ export const existsFile = (p: string): boolean => {
   return fs.existsSync(p) && fs.statSync(p).isFile()
 }
 
+export const loadFile = (p: string): string => {
+  return fs.readFileSync(p, "utf8")
+}
+
 export const writeFile = (p: string, content: string): void => {
   fs.writeFileSync(p, content)
 }

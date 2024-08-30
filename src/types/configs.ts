@@ -44,12 +44,3 @@ export const SprRunRequestFileSchema = z.object({
   workflow_attachment_obj: z.string().nullable().optional(),
   tags: z.string().nullable().optional(),
 })
-
-export interface SprRunRequest extends SprRunRequestFile {
-  workflow_params: string
-}
-
-export const SprRunRequestSchema = z.object({
-  ...SprRunRequestFileSchema.shape,
-  workflow_params: z.string(),
-})

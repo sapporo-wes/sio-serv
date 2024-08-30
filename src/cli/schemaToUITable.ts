@@ -16,7 +16,7 @@ const help = () => {
 Usage: schema-to-table [OPTIONS]
 
 Options:
-  -i, --input <file>     Input schema file (required)
+  -i, --input <file>     Input workflow params schema file (required)
   -o, --output <file>    Output UI table file (default: ui-table.tsv)
   -f, --format <format>  Output format: tsv or csv (default: tsv)
   -p, --pipe             Write output to stdout
@@ -81,9 +81,7 @@ const main = () => {
   try {
     validateJSONSchema(schema)
   } catch (e) {
-    if (e instanceof Error) {
-      console.error(`Error: Invalid input schema: ${args.inputPath}: ${e.message}`)
-    }
+    console.error(`Error: Invalid inputted schema: ${args.inputPath}${e instanceof Error ? ": " + e.message : ""}`)
     process.exit(1)
   }
   const tableRows = schemaToUITable(schema)
