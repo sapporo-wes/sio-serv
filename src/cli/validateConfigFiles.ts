@@ -104,6 +104,8 @@ const main = () => {
       process.exit(1)
     }
   }
+
+  console.log("Validation successful")
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

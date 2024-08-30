@@ -8,4 +8,5 @@
 ```bash=
 # At the root of the repository
 npm run schema-to-table -- -i ./tests/wf-params-schema.json -o ./tests/ui-table.tsv
+npm run validate-config-files -- -w ./tests/wf-params-schema.json -u ./tests/ui-table.tsv -r ./tests/run-request.json
 ```

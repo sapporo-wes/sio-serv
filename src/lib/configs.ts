@@ -1,14 +1,11 @@
 import { UITableRow, UITableRowSchema, JSONSchema } from "@/types/configs"
-import metaSchema from "ajv/lib/refs/json-schema-draft-07.json"
 import Ajv from "ajv"
 
 export const validateJSONSchema = (schema: JSONSchema): void => {
   const ajv = new Ajv()
-  ajv.addMetaSchema(metaSchema)
-  const validate = ajv.compile(metaSchema)
-  const valid = validate(schema)
+  const valid = ajv.validateSchema(schema)
   if (!valid) {
-    throw new Error(`Invalid JSON Schema: ${ajv.errorsText(validate.errors)}`)
+    throw new Error(`Invalid JSON schema: ${ajv.errorsText(ajv.errors)}`)
   }
 }
 
