@@ -1,3 +1,5 @@
+// Split into utils.ts to use Node.js's things such as fs and path
+
 import path from "path"
 import fs from "fs"
 
@@ -10,6 +12,10 @@ export const resolvePath = (p: string): string => {
 
 export const existsFile = (p: string): boolean => {
   return fs.existsSync(p) && fs.statSync(p).isFile()
+}
+
+export const writeFile = (p: string, content: string): void => {
+  fs.writeFileSync(p, content)
 }
 
 export const loadJson = (p: string): Record<string, unknown> => {

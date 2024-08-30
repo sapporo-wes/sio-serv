@@ -1,4 +1,16 @@
 import { UITableRow, UITableRowSchema, JSONSchema } from "@/types"
+import metaSchema from "ajv/lib/refs/json-schema-draft-07.json"
+import Ajv from "ajv"
+
+export const validateJSONSchema = (schema: JSONSchema): void => {
+  const ajv = new Ajv()
+  ajv.addMetaSchema(metaSchema)
+  const validate = ajv.compile(metaSchema)
+  const valid = validate(schema)
+  if (!valid) {
+    throw new Error(`Invalid JSON Schema: ${ajv.errorsText(validate.errors)}`)
+  }
+}
 
 export const UI_TABLE_HEADER = ["Parameter Key", "Title", "Description", "UI Component Type", "Default", "Required", "Editable"]
 

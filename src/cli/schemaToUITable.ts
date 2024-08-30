@@ -1,9 +1,8 @@
 import { fileURLToPath } from "url"
 import { parseArgs } from "util"
-import { resolvePath, existsFile, loadJson } from "@/cli/utils"
-import { schemaToUITable, UI_TABLE_HEADER } from "@/schema"
+import { resolvePath, existsFile, loadJson, writeFile } from "@/cli/utils"
+import { validateJSONSchema, schemaToUITable, UI_TABLE_HEADER } from "@/schema"
 import { JSONSchema, UITableRow } from "@/types"
-import fs from "fs"
 
 interface CliArgs {
   inputPath: string
@@ -18,14 +17,14 @@ Usage: schema-to-table [OPTIONS]
 
 Options:
   -i, --input <file>     Input schema file (required)
-  -o, --output <file>    Output table file (default: output.tsv)
+  -o, --output <file>    Output UI table file (default: ui-table.tsv)
   -f, --format <format>  Output format: tsv or csv (default: tsv)
   -p, --pipe             Write output to stdout
   -h, --help             Show this help message and exit
 
 Examples:
-  schema-to-table -i schema.json -o table.tsv
-  schema-to-table --input=schema.json --pipe --format=csv
+  schema-to-table -i wf-params-schema.json -o ui-table.tsv
+  schema-to-table --input=wf-params-schema.json --pipe --format=csv
 `)
   process.exit(1)
 }
@@ -35,7 +34,7 @@ const parseCliArgs = (args: string[]): CliArgs => {
     args,
     options: {
       input: { type: "string", short: "i" },
-      output: { type: "string", short: "o", default: "output.tsv" },
+      output: { type: "string", short: "o", default: "ui-table.tsv" },
       format: { type: "string", short: "f", default: "tsv" },
       pipe: { type: "boolean", short: "p" },
       help: { type: "boolean", short: "h" },
@@ -79,12 +78,21 @@ const tableToString = (rows: UITableRow[], format: CliArgs["outputFormat"]): str
 const main = () => {
   const args = parseCliArgs(process.argv.slice(2))
   const schema = loadJson(args.inputPath) as JSONSchema
+  try {
+    validateJSONSchema(schema)
+  } catch (e) {
+    if (e instanceof Error) {
+      console.error(`Error: Invalid input schema: ${args.inputPath}: ${e.message}`)
+    }
+    process.exit(1)
+  }
   const tableRows = schemaToUITable(schema)
   const tableString = tableToString(tableRows, args.outputFormat)
   if (args.pipe) {
     console.log(tableString)
+  } else {
+    writeFile(args.outputPath, tableString)
   }
-  fs.writeFileSync(args.outputPath, tableString)
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {

@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build --emptyOutDir",
     "lint": "eslint .",
     "preview": "vite preview",
-    "schema-to-table": "tsx ./src/cli/schemaToTable.ts"
+    "schema-to-ui-table": "tsx ./src/cli/schemaToUITable.ts"
   },
   "dependencies": {
     "@apidevtools/json-schema-ref-parser": "^11.7.0",

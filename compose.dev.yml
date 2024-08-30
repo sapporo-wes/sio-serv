@@ -10,9 +10,9 @@ services:
       - SIO_SERV_KEYCLOAK_CLIENT_ID=sio-serv-spa
       - SIO_SERV_MINIO_ENDPOINT=http://localhost:9000
       - SIO_SERV_SAPPORO_ENDPOINT=http://localhost:1122
-      - SIO_SERV_UI_TABLE_FILE=/app/tests/ui_table.tsv
-      - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf_params_schema.json
-      - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run_request.json
+      - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table.tsv
+      - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema.json
+      - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run-request.json
     volumes:
       - ${PWD}:/app
       - node_modules:/app/node_modules
