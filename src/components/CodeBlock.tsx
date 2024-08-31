@@ -16,7 +16,6 @@ export default function CodeBlock({ sx, codeString, language }: CodeBlockProps) 
   const [isExpanded, setIsExpanded] = useState(false)
 
   const handleCopy = () => {
-
     navigator.clipboard.writeText(codeString).then(() => {
       setCopied(true)
       setTimeout(() => { setCopied(false) }, 2000)
