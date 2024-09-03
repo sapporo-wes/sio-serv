@@ -1,7 +1,7 @@
 // Split into utils.ts to use Node.js's things such as fs and path
 
-import path from "path"
 import fs from "fs"
+import path from "path"
 
 export const resolvePath = (p: string): string => {
   if (!path.isAbsolute(p)) {

@@ -1,6 +1,7 @@
 import { atom } from "recoil"
-import { JSONSchema, UITableRow } from "@/types/configs"
+
 import { loadUITable } from "@/lib/configs"
+import { JSONSchema, UITableRow } from "@/types/configs"
 
 export const uiTableAtom = atom<UITableRow[]>({
   key: "uiTable",

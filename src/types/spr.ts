@@ -1,5 +1,6 @@
-import { SprRunRequestFileSchema, SprRunRequestFile } from "@/types/configs"
 import { z } from "zod"
+
+import { SprRunRequestFileSchema, SprRunRequestFile } from "@/types/configs"
 
 export interface SprRunRequest extends SprRunRequestFile {
   workflow_params: string

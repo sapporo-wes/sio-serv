@@ -1,10 +1,11 @@
 import { AccountCircleOutlined, ArrowDropDownOutlined, LoginOutlined, LogoutOutlined, Check, FileCopyOutlined } from "@mui/icons-material"
 import { Button, Menu, MenuItem } from "@mui/material"
 import { SxProps, darken } from "@mui/system"
+import React from "react"
 import { useAuth } from "react-oidc-context"
+
 import AppHeaderBase from "@/components/AppHeaderBase"
 import theme from "@/theme"
-import React from "react"
 
 export interface AppHeaderProps {
   sx?: SxProps

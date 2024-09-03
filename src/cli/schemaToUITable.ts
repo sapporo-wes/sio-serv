@@ -1,8 +1,9 @@
 import { fileURLToPath } from "url"
 import { parseArgs } from "util"
+
 import { resolvePath, existsFile, loadJson, writeFile } from "@/cli/utils"
-import { validateJSONSchema, schemaToUITable, UI_TABLE_HEADER } from "@/schema"
-import { JSONSchema, UITableRow } from "@/types"
+import { validateJSONSchema, schemaToUITable, UI_TABLE_HEADER } from "@/lib/configs"
+import { JSONSchema, UITableRow } from "@/types/configs"
 
 interface CliArgs {
   inputPath: string

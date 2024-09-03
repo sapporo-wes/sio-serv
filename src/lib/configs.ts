@@ -1,5 +1,6 @@
-import { UITableRow, UITableRowSchema, JSONSchema } from "@/types/configs"
 import Ajv from "ajv"
+
+import { UITableRow, UITableRowSchema, JSONSchema } from "@/types/configs"
 
 export const validateJSONSchema = (schema: JSONSchema): void => {
   const ajv = new Ajv()

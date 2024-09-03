@@ -1,21 +1,22 @@
-import globals from "globals"
 import js from "@eslint/js"
+import stylisticJs from "@stylistic/eslint-plugin-js"
+import eslintPluginImportX from "eslint-plugin-import-x"
 import reactHooks from "eslint-plugin-react-hooks"
 import reactRefresh from "eslint-plugin-react-refresh"
-import stylisticJs from "@stylistic/eslint-plugin-js"
+import globals from "globals"
 import tseslint from "typescript-eslint"
 
 export default tseslint.config(
-  {
-    ignores: ["dist"],
-  },
   {
     extends: [
       js.configs.recommended,
       ...tseslint.configs.strict,
       ...tseslint.configs.stylistic,
+      eslintPluginImportX.flatConfigs.recommended,
+      eslintPluginImportX.flatConfigs.typescript,
     ],
     files: ["**/*.{js,ts,tsx}"],
+    ignores: ["dist"],
     languageOptions: { ecmaVersion: 2020, globals: globals.browser },
     plugins: {
       "react-hooks": reactHooks,
@@ -48,6 +49,33 @@ export default tseslint.config(
       "@stylistic/js/object-curly-spacing": ["error", "always"],
       "@stylistic/js/quotes": ["error", "double"],
       "@stylistic/js/semi": ["error", "never"],
+
+      // Import rules
+      "import-x/first": "error",
+      "import-x/order": ["error", {
+        "newlines-between": "always",
+        "groups": [
+          ["builtin", "external", "internal"],
+          "parent",
+          "sibling",
+          "index",
+        ],
+        "pathGroups": [
+          {
+            "pattern": "@/**",
+            "group": "internal",
+            "position": "after",
+          },
+        ],
+        "pathGroupsExcludedImportTypes": ["builtin"],
+        "alphabetize": {
+          "order": "asc",
+          "caseInsensitive": true,
+        },
+      }],
+      "import-x/newline-after-import": "error",
+      "import-x/no-duplicates": "error",
+      "import-x/no-unresolved": "off",
     },
   },
 )
