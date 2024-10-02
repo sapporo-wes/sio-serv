@@ -12,13 +12,13 @@ import ErrorFallback from "@/pages/ErrorFallback"
 import Home from "@/pages/Home"
 import theme from "@/theme"
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <RecoilRoot>
-          <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
             <AuthProvider {...oidcConfig}>
               <AuthHelper>
                 <Routes>
@@ -33,5 +33,3 @@ function App() {
     </BrowserRouter>
   )
 }
-
-export default App

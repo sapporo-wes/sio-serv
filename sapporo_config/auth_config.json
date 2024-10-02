@@ -12,10 +12,10 @@
     ]
   },
   "external_config": {
-    "idp_url": "http://sio-serv-keycloak-dev:8080/realms/sio-serv",
+    "idp_url": "http://localhost:8080/realms/sio-serv",
     "jwt_audience": "account",
     "client_mode": "public",
-    "client_id": "sio-serv-spa",
+    "client_id": "sio-serv-app",
     "client_secret": "example-client-secret"
   }
 }

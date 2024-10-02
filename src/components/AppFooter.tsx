@@ -7,7 +7,7 @@ export interface AppFooterProps {
 
 export default function AppFooter({ sx }: AppFooterProps) {
   return (
-    <Box component="footer" sx={{ ...sx, mt: "1.5rem", mb: "1.5rem" }}>
+    <Box component="footer" sx={{ ...sx, margin: "1.5rem 0" }}>
       <Typography variant="body2" align="center" color="text.secondary">
         © 2003-{new Date().getFullYear()} Graduate School of Medicine and School of Medicine, Chiba University.
       </Typography>

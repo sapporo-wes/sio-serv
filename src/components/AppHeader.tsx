@@ -39,7 +39,7 @@ export default function AppHeader({ sx }: AppHeaderProps) {
                   bgcolor: darken(theme.palette.primary.dark, 0.2),
                 },
               }}
-              onClick={(e) => { setMenuAnchorEl(e.currentTarget) }}
+              onClick={(e) => setMenuAnchorEl(e.currentTarget)}
             >
               <AccountCircleOutlined sx={{ mr: "0.5rem" }} />
               {auth.user?.profile.preferred_username}
