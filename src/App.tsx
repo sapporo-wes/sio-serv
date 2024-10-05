@@ -10,6 +10,7 @@ import AuthHelper from "@/components/AuthHelper"
 import AuthCallback from "@/pages/AuthCallback"
 import ErrorFallback from "@/pages/ErrorFallback"
 import Home from "@/pages/Home"
+import RunDetail from "@/pages/RunDetail"
 import theme from "@/theme"
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
               <AuthHelper>
                 <Routes>
                   <Route path="/" element={<Home />} />
+                  <Route path="/runs/:runId" element={<RunDetail />} />
                   <Route path="/auth/callback" element={<AuthCallback />} />
                 </Routes>
               </AuthHelper>

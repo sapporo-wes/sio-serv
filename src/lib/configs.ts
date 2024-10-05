@@ -16,7 +16,7 @@ export const schemaToUITable = (schema: JSONSchema, parentPath = ""): UITableRow
   const rows: UITableRow[] = []
 
   if (schema.type === "object" && schema.properties !== undefined) {
-    const requiredFields = new Set(schema.required || [])
+    const requiredFields = new Set(schema.required ?? [])
     for (const [key, value] of Object.entries(schema.properties!) as [string, JSONSchema][]) {
       const jsonPath = parentPath !== "" ? `${parentPath}.${key}` : key
       if (value.type !== "object") {
@@ -27,7 +27,7 @@ export const schemaToUITable = (schema: JSONSchema, parentPath = ""): UITableRow
         const type = value.type
         const required = requiredFields.has(key)
         const defaultValue = (() => {
-          const val = value.default || value.const || undefined
+          const val = value.default ?? value.const ?? undefined
           if (val === undefined) return ""
           if (type === "string") return String(val)
           if (type === "number") return Number(val)
@@ -35,8 +35,8 @@ export const schemaToUITable = (schema: JSONSchema, parentPath = ""): UITableRow
           if (type === "array") return JSON.stringify(val)
           return ""
         })()
-        const title = value.title || ""
-        const description = value.description || ""
+        const title = value.title ?? ""
+        const description = value.description ?? ""
 
         const { success, data, error } = UITableRowSchema.safeParse({
           jsonPath,
@@ -78,7 +78,7 @@ export const loadUITable = (uiTableContent: string): UITableRow[] => {
     if (line === "") return null
     const cols = line.split(delimiter)
     if (cols.length !== header.length) {
-      throw new Error(`Invalid UI Table file: row length mismatch at row ${i + 2}: ${cols[0] || "<empty>"}`)
+      throw new Error(`Invalid UI Table file: row length mismatch at row ${i + 2}: ${cols[0] ?? "<empty>"}`)
     }
     const typeValue = cols[3]
     const defaultValue = (() => {

@@ -12,7 +12,7 @@ export default function AuthCallback() {
 
   useEffect(() => {
     if (auth.isAuthenticated) {
-      const prevPath = localStorage.getItem("sio-serv.auth.currentPath") || "/"
+      const prevPath = localStorage.getItem("sio-serv.auth.currentPath") ?? "/"
       navigate(prevPath)
     }
   }, [auth.isAuthenticated, navigate])

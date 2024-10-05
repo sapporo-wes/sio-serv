@@ -1,5 +1,5 @@
 import { AccountCircleOutlined, ArrowDropDownOutlined, LoginOutlined, LogoutOutlined, Check, FileCopyOutlined } from "@mui/icons-material"
-import { Button, Menu, MenuItem } from "@mui/material"
+import { Button, Menu, MenuItem, Typography } from "@mui/material"
 import { SxProps, darken } from "@mui/system"
 import React from "react"
 import { useAuth } from "react-oidc-context"
@@ -18,7 +18,7 @@ export default function AppHeader({ sx }: AppHeaderProps) {
   const [copied, setCopied] = React.useState(false)
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(auth.user?.access_token || "").then(() => {
+    navigator.clipboard.writeText(auth.user?.access_token ?? "").then(() => {
       setCopied(true)
       setTimeout(() => { setCopied(false) }, 2000)
     })
@@ -42,7 +42,7 @@ export default function AppHeader({ sx }: AppHeaderProps) {
               onClick={(e) => setMenuAnchorEl(e.currentTarget)}
             >
               <AccountCircleOutlined sx={{ mr: "0.5rem" }} />
-              {auth.user?.profile.preferred_username}
+              <Typography children={auth.user?.profile.preferred_username} />
               <ArrowDropDownOutlined />
             </Button>
             <Menu
@@ -50,7 +50,7 @@ export default function AppHeader({ sx }: AppHeaderProps) {
               open={Boolean(menuAnchorEl)}
               onClose={() => setMenuAnchorEl(null)}
             >
-              <MenuItem onClick={handleCopy}>
+              <MenuItem onClick={handleCopy} sx={{ minWidth: "220px" }}>
                 {copied ? <>
                   <Check sx={{ mr: "0.5rem" }} />
                   {"Copied!"}

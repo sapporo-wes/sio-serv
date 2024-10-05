@@ -12,6 +12,8 @@ interface CodeBlockProps {
 }
 
 export default function CodeBlock({ sx, codeString, language }: CodeBlockProps) {
+  codeString = codeString ?? ""
+
   const [copied, setCopied] = useState(false)
   const [isExpanded, setIsExpanded] = useState(false)
 

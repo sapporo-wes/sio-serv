@@ -1,3 +1,4 @@
+import { SetMeal } from "@mui/icons-material"
 import { Typography, AppBar, Box } from "@mui/material"
 import { SxProps } from "@mui/system"
 import { Link } from "react-router-dom"
@@ -23,15 +24,18 @@ export default function AppHeaderBase({ sx, leftContent, rightContent }: AppHead
     }}>
       <Box sx={{ ml: "1.5rem" }}>
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-          <Typography
-            component="div"
-            sx={{
-              fontSize: "1.75rem",
-              letterSpacing: "0.25rem",
-              mb: "0.25rem",
-            }}
-            children="sio-serv"
-          />
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <SetMeal sx={{ fontSize: "1.8rem", mr: "0.5rem" }} />
+            <Typography
+              component="div"
+              sx={{
+                fontSize: "1.75rem",
+                letterSpacing: "0.25rem",
+                mb: "0.25rem",
+              }}
+              children="sio-serv"
+            />
+          </Box>
         </Link>
         {leftContent}
       </Box>

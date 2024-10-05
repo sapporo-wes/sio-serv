@@ -27,7 +27,7 @@ export default function AuthHelper({ children }: AutomaticSignInProps) {
       !auth.activeNavigator &&
       !auth.isLoading &&
       !hasTriedSignin &&
-      !isTokenExpired(auth.user?.expires_at || 0)
+      !isTokenExpired(auth.user?.expires_at ?? 0)
     ) {
       auth.signinSilent()
       setHasTriedSignin(true)

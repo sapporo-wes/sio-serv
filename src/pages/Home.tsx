@@ -1,28 +1,23 @@
-import { Box, Container } from "@mui/material"
-import Form from "@rjsf/mui"
-import validator from "@rjsf/validator-ajv8"
-import { useAuth } from "react-oidc-context"
-import { useRecoilValue } from "recoil"
+import { Box, Container, Divider } from "@mui/material"
 
 import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
-import CodeBlock from "@/components/CodeBlock"
-import { convertToSchemaForForm } from "@/lib/configs"
-import { uiTableAtom } from "@/store/configs"
+import HistorySec from "@/components/Home/HistorySec"
+import OverviewSec from "@/components/Home/OverviewSec"
+import SingleRunSec from "@/components/Home/SingleRunSec"
 
 export default function Home() {
-  const auth = useAuth()
-  const uiTable = useRecoilValue(uiTableAtom)
-  const schemaForForm = convertToSchemaForForm(uiTable)
-
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <AppHeader />
       <Container component="main" maxWidth="lg" sx={{ flexGrow: 1, justifyContent: "center" }}>
-        <Form schema={schemaForForm} validator={validator} />
-        <CodeBlock language="json" codeString={JSON.stringify(auth.user, null, 2)} />
+        <OverviewSec sx={{ margin: "1.5rem 0" }} />
+        <Divider />
+        <SingleRunSec sx={{ margin: "1.5rem 0" }} />
+        <Divider />
+        <HistorySec sx={{ margin: "1.5rem 0" }} />
       </Container>
       <AppFooter />
-    </Box>
+    </Box >
   )
 }
