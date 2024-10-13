@@ -7,6 +7,7 @@ import { RecoilRoot } from "recoil"
 
 import { oidcConfig } from "@/auth"
 import AuthHelper from "@/components/AuthHelper"
+import DependencyChecker from "@/components/DependencyChecker"
 import AuthCallback from "@/pages/AuthCallback"
 import ErrorFallback from "@/pages/ErrorFallback"
 import Home from "@/pages/Home"
@@ -20,15 +21,17 @@ export default function App() {
         <CssBaseline />
         <RecoilRoot>
           <ErrorBoundary FallbackComponent={ErrorFallback} onReset={() => window.location.reload()}>
-            <AuthProvider {...oidcConfig}>
-              <AuthHelper>
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/runs/:runId" element={<RunDetail />} />
-                  <Route path="/auth/callback" element={<AuthCallback />} />
-                </Routes>
-              </AuthHelper>
-            </AuthProvider>
+            <DependencyChecker>
+              <AuthProvider {...oidcConfig}>
+                <AuthHelper>
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/runs/:runId" element={<RunDetail />} />
+                    <Route path="/auth/callback" element={<AuthCallback />} />
+                  </Routes>
+                </AuthHelper>
+              </AuthProvider>
+            </DependencyChecker>
           </ErrorBoundary>
         </RecoilRoot>
       </ThemeProvider>

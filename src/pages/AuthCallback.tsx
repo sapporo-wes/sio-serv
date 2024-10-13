@@ -21,7 +21,9 @@ export default function AuthCallback() {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <AppHeaderBase />
       <Container component="main" maxWidth="lg" sx={{ flexGrow: 1, justifyContent: "center" }}>
-        <Typography sx={{ mt: "1.5rem" }}>Authenticating...</Typography>
+        <Box sx={{ margin: "1.5rem 0" }}>
+          <Typography children="Authenticating..." />
+        </Box>
       </Container>
       <AppFooter />
     </Box>

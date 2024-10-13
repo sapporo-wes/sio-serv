@@ -176,6 +176,7 @@ export default function HistorySec({ sx }: HistorySecProps) {
                   onPageChange={handleChangePage}
                   onRowsPerPageChange={handleChangeRowsPerPage}
                   sx={{ border: "none" }}
+                  component="div"
                 />
               </Box>
             </Box>

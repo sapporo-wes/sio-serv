@@ -12,12 +12,14 @@ const isTokenExpired = (exp: number) => {
 export default function AuthHelper({ children }: AutomaticSignInProps) {
   const auth = useAuth()
   const [hasTriedSignin, setHasTriedSignin] = useState(false)
-  const currentPath = window.location.pathname
 
   // For redirecting to the current path after signin used in AuthCallback.tsx
-  if (!auth.isAuthenticated && currentPath !== `${import.meta.env.BASE_URL}auth/callback`) {
-    localStorage.setItem("sio-serv.auth.currentPath", currentPath)
-  }
+  useEffect(() => {
+    const currentPath = window.location.pathname
+    if (!auth.isAuthenticated && currentPath !== `${import.meta.env.BASE_URL}auth/callback`) {
+      localStorage.setItem("sio-serv.auth.currentPath", currentPath)
+    }
+  }, [auth.isAuthenticated])
 
   // Automatic signin
   useEffect(() => {
@@ -32,20 +34,31 @@ export default function AuthHelper({ children }: AutomaticSignInProps) {
       auth.signinSilent()
       setHasTriedSignin(true)
     }
+
+    if (auth.isAuthenticated) {
+      setHasTriedSignin(false) // Reset after successful signin
+    }
   }, [auth, hasTriedSignin])
 
   // Automatic renew token
   useEffect(() => {
-    const handleTokenExpiring = () => {
-      auth.signinSilent()
+    const refreshTokenBeforeExpiry = () => {
+      if (auth.user?.expires_at) {
+        const expirationTime = auth.user.expires_at * 1000 - Date.now()
+        const refreshTime = expirationTime - 1000 * 60 // 1 minutes before expiration
+        if (refreshTime > 0) {
+          const timeoutId = setTimeout(() => {
+            auth.signinSilent()
+          }, refreshTime)
+          return () => clearTimeout(timeoutId)
+        }
+      }
     }
 
-    auth.events.addAccessTokenExpiring(handleTokenExpiring)
-
-    return () => {
-      auth.events.removeAccessTokenExpiring(handleTokenExpiring)
+    if (auth.isAuthenticated) {
+      refreshTokenBeforeExpiry()
     }
-  })
+  }, [auth])
 
   return <>{children}</>
 }
