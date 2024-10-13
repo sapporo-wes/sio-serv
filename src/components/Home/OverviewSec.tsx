@@ -82,7 +82,7 @@ export default function OverviewSec({ sx }: OverviewSecProps) {
         <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Workflow & Run Cfg. Overview" />
       </Box>
 
-      <Box sx={{ display: "flex", "flexDirection": "column", margin: "0.5rem 1.5rem" }}>
+      <Box sx={{ display: "flex", "flexDirection": "column", margin: "1rem 1.5rem" }}>
         <Box sx={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
           {/* Workflow URL */}
           <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>

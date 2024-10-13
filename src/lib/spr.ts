@@ -1,5 +1,5 @@
 import { SprRunRequestFile } from "@/types/configs"
-import { ServiceInfo, ServiceInfoSchema, RunRequestFormData, RunId, RunIdSchema, RunLog, RunLogSchema } from "@/types/spr"
+import { ServiceInfo, ServiceInfoSchema, RunRequestFormData, RunId, RunIdSchema, RunLog, RunLogSchema, RunListResponse, State, RunListResponseSchema, RunSummary } from "@/types/spr"
 
 export const getServiceInfo = async (): Promise<ServiceInfo> => {
   try {
@@ -116,4 +116,64 @@ export const getRun = async (runId: string, token: string): Promise<RunLog> => {
       throw new Error(`An unknown error occurred during getRun (runId: ${runId})`)
     }
   }
+}
+
+export const getRuns = async (
+  token: string,
+  pageSize?: number,
+  pageToken?: string | null,
+  sortOrder?: "asc" | "desc",
+  state?: State,
+  run_ids?: string[],
+  latest?: boolean,
+): Promise<RunListResponse> => {
+  const params = new URLSearchParams()
+  if (pageSize !== undefined) params.set("page_size", pageSize.toString())
+  if (pageToken !== undefined && pageToken !== null) params.set("page_token", pageToken)
+  if (sortOrder !== undefined) params.set("sort_order", sortOrder)
+  if (state !== undefined) params.set("state", state)
+  if (run_ids !== undefined) run_ids.forEach((run_id) => params.append("run_ids", run_id))
+  if (latest !== undefined) params.set("latest", latest.toString())
+  try {
+    const response = await fetch(`${SAPPORO_ENDPOINT}/runs?${params.toString()}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error, failed to get runs, status: ${response.status}, statusText ${response.statusText}`)
+    }
+    const data = await response.json()
+    const parseResult = await RunListResponseSchema.safeParseAsync(data)
+    if (!parseResult.success) {
+      throw new Error(`Schema validation failed: ${JSON.stringify(parseResult.error, null, 2)}`)
+    }
+
+    return parseResult.data
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(`Failed to get runs: ${e.message}`)
+    } else {
+      throw new Error("An unknown error occurred during getRuns")
+    }
+  }
+}
+
+export const getAllRuns = async (
+  token: string,
+  pageSize = 100,
+  latest = true,
+): Promise<RunSummary[]> => {
+  const allRuns: RunSummary[] = []
+  let nextPageToken: string | undefined | null = undefined
+  while (true) {
+    const { runs, next_page_token } = await getRuns(token, pageSize, nextPageToken, undefined, undefined, undefined, latest)
+    allRuns.push(...runs as RunSummary[])
+    if (next_page_token === null || next_page_token === undefined || next_page_token === "") {
+      break
+    }
+    nextPageToken = next_page_token
+  }
+
+  return allRuns
 }

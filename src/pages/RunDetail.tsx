@@ -6,6 +6,8 @@ import { useParams } from "react-router-dom"
 
 import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
+import InfoSec from "@/components/RunDetail/InfoSec"
+import ResultSec from "@/components/RunDetail/ResultSec"
 import { getRun } from "@/lib/spr"
 import { RunLog } from "@/types/spr"
 
@@ -54,9 +56,9 @@ export default function RunDetail() {
     }
     return (
       <>
-        <Typography children={`Run ID: ${runId}`} />
+        <InfoSec run={run!} />
         <Divider />
-        <Typography children={`${JSON.stringify(run, null, 2)}`} />
+        <ResultSec run={run!} />
       </>
     )
   }

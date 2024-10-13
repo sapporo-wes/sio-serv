@@ -129,8 +129,7 @@ export interface ServiceInfo extends Service {
   tags: Record<string, string>
 }
 
-export const ServiceInfoSchema = z.object({
-  ...ServiceSchema.shape,
+export const ServiceInfoSchema = ServiceSchema.extend({
   workflow_type_versions: z.record(WorkflowTypeVersionSchema),
   supported_wes_versions: z.array(z.string()),
   supported_filesystem_protocols: z.array(z.string()),
@@ -187,8 +186,7 @@ export interface RunSummary extends RunStatus {
   tags: Record<string, string>
 }
 
-export const RunSummarySchema = z.object({
-  ...RunStatusSchema.shape,
+export const RunSummarySchema = RunStatusSchema.extend({
   start_time: z.string().optional().nullable(),
   end_time: z.string().optional().nullable(),
   tags: z.record(z.string()),
@@ -200,7 +198,7 @@ export interface RunListResponse {
 }
 
 export const RunListResponseSchema = z.object({
-  runs: z.array(z.union([RunStatusSchema, RunSummarySchema])).optional().nullable(),
+  runs: z.array(z.union([RunSummarySchema, RunStatusSchema])).optional().nullable(),
   next_page_token: z.string().optional().nullable(),
 })
 
@@ -261,8 +259,7 @@ export interface TaskLog extends Log {
   tes_uri?: string | null
 }
 
-export const TaskLogSchema = z.object({
-  ...LogSchema.shape,
+export const TaskLogSchema = LogSchema.extend({
   id: z.string(),
   name: z.string(),
   system_logs: z.array(z.string()).optional().nullable(),
@@ -285,7 +282,7 @@ export const RunLogSchema = z.object({
   state: StateSchema.optional().nullable(),
   run_log: LogSchema.optional().nullable(),
   task_logs_url: z.string().optional().nullable(),
-  task_logs: z.array(z.union([LogSchema, TaskLogSchema])).optional().nullable(),
+  task_logs: z.array(z.union([TaskLogSchema, LogSchema])).optional().nullable(),
   outputs: z.array(FileObjectSchema).optional().nullable(),
 })
 
