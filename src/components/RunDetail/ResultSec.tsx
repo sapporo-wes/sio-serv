@@ -1,18 +1,137 @@
-import { Box } from "@mui/material"
+import { FileDownloadOutlined } from "@mui/icons-material"
+import { Box, Tabs, Tab, Typography, Link } from "@mui/material"
 import { SxProps } from "@mui/system"
+import { useState, useEffect, useRef } from "react"
+import { useErrorBoundary } from "react-error-boundary"
+import { useAuth } from "react-oidc-context"
 
-import { RunLog } from "@/types/spr"
+import CodeBlock from "@/components/CodeBlock"
+import { FileObject, RunLog } from "@/types/spr"
 
 export interface ResultSecProps {
   sx?: SxProps
   run: RunLog
+  tabIndex: number
+  setTabIndex: (index: number) => void
 }
 
-export default function ResultSec({ sx, run }: ResultSecProps) {
+interface TabHeader {
+  id: string
+  tabName: string
+}
+
+const tabs: TabHeader[] = [
+  {
+    id: "result",
+    tabName: "Result",
+  },
+  {
+    id: "workflowParams",
+    tabName: "Workflow Parameters",
+  },
+  {
+    id: "logs",
+    tabName: "Logs",
+  },
+]
+
+export default function ResultSec({ sx, run, tabIndex, setTabIndex }: ResultSecProps) {
+  const auth = useAuth()
+  const { showBoundary } = useErrorBoundary()
+
+  // Download file with authorization
+  const downloadFile = (file: FileObject) => {
+    const xhr = new XMLHttpRequest()
+    xhr.open("GET", file.file_url, true)
+    xhr.setRequestHeader("Authorization", `Bearer ${auth.user?.access_token}`)
+    xhr.responseType = "blob"
+
+    xhr.onload = () => {
+      if (xhr.status === 200) {
+        const url = window.URL.createObjectURL(xhr.response)
+        const a = document.createElement("a")
+        a.href = url
+        a.download = file.file_name
+        a.click() // TODO: Check large file download
+        window.URL.revokeObjectURL(url)
+      } else {
+        showBoundary(new Error(`Failed to download file: ${file.file_name}: ${xhr.statusText}`))
+      }
+    }
+
+    xhr.onerror = () => {
+      showBoundary(new Error(`Failed to download file: ${file.file_name}: ${xhr.statusText}`))
+    }
+
+    xhr.send()
+  }
+
   return (
     <Box sx={{ ...sx }}>
-      {/* {JSON.stringify(run, null, 2)} */}
-      ResultSec
-    </Box>
+      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+        <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)} >
+          {tabs.map((tab, index) => (
+            <Tab key={index} label={tab.tabName} sx={{ textTransform: "none" }} />
+          ))}
+        </Tabs>
+      </Box>
+
+      {/* Result */}
+      {
+        tabIndex === 0 && (
+          <Box sx={{ display: "flex", flexDirection: "row", margin: "1rem 1.5rem 1.5rem" }}>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
+                <FileDownloadOutlined sx={{ fontSize: "1.6rem", mr: "0.5rem" }} />
+                <Typography sx={{ fontSize: "1.4rem" }} children="Download Outputs" />
+              </Box>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: "0.3rem", margin: "0.5rem 1.5rem 0" }}>
+                {(run.outputs ?? []).map((output, index) => (
+                  <Link
+                    key={index}
+                    href={output.file_url}
+                    children={output.file_name}
+                    underline="hover"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      downloadFile(output)
+                    }}
+                  />
+                ))}
+              </Box>
+            </Box>
+          </Box>
+        )
+      }
+
+      {/* Workflow Parameters */}
+      {
+        tabIndex === 1 && (
+          <Box sx={{ margin: "1.5rem" }}>
+            <CodeBlock codeString={JSON.stringify(run.request?.workflow_params ?? "", null, 2)} language="json" />
+          </Box>
+        )
+      }
+
+      {/* Logs */}
+      {
+        tabIndex === 2 && (
+          <Box sx={{ display: "flex", flexDirection: "column", margin: "1.5rem" }}>
+            <Box sx={{ display: "flex", flexDirection: "row", height: "2rem", alignItems: "center", mb: "0.5rem" }}>
+              <Typography children="Exit Code:" sx={{ fontWeight: "bold", minWidth: "120px", letterSpacing: "0.05rem" }} />
+              <Typography children={run.run_log?.exit_code ?? "N/A"} />
+            </Box>
+            {run.run_log?.stdout && <>
+              <Typography children="Stdout:" sx={{ fontWeight: "bold", letterSpacing: "0.05rem", mb: "0.5rem" }} />
+              <CodeBlock codeString={run.run_log?.stdout ?? ""} language="json" sx={{ mb: "1rem" }} />
+            </>}
+            {run.run_log?.stderr && <>
+              <Typography children="Stderr:" sx={{ fontWeight: "bold", letterSpacing: "0.05rem", mb: "0.5rem" }} />
+              <CodeBlock codeString={run.run_log?.stderr ?? ""} language="plaintext" />
+            </>}
+          </Box>
+        )
+      }
+    </Box >
   )
 }

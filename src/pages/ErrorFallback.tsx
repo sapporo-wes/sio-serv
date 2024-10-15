@@ -35,7 +35,7 @@ export default function ErrorFallback({ error, resetErrorBoundary }: ErrorFallba
           </Paper>
         </Box>
         <Box sx={{ margin: "1.5rem 0" }}>
-          <Button variant="contained" color="primary" onClick={resetErrorBoundary} children="Retry" />
+          <Button variant="contained" color="primary" onClick={resetErrorBoundary} children="Retry" sx={{ textTransform: "none" }} />
         </Box>
       </Container>
       <AppFooter />

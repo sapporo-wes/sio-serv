@@ -93,13 +93,13 @@ export default function OverviewSec({ sx }: OverviewSecProps) {
           {/* Workflow Type */}
           <Box sx={{ display: "flex", flexDirection: "row", height: ROW_HEIGHT, alignItems: "center" }}>
             <Typography children="Workflow Type:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
-            <Typography children={runRequestFile.workflow_type} />
+            <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_type} />
           </Box>
 
           {/* Workflow Engine */}
           <Box sx={{ display: "flex", flexDirection: "row", height: ROW_HEIGHT, alignItems: "center" }}>
             <Typography children="Workflow Engine:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
-            <Typography children={runRequestFile.workflow_engine} />
+            <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_engine} />
           </Box>
         </Box>
 
@@ -115,11 +115,11 @@ export default function OverviewSec({ sx }: OverviewSecProps) {
               <Box sx={{ display: "flex", flexDirection: "column", gap: "0.75rem", mt: "1.5rem" }}>
                 <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
                   <Typography children="Workflow Type Ver.:" sx={{ fontWeight: "bold", minWidth: "200px", letterSpacing: "0.05rem" }} />
-                  <Typography children={runRequestFile.workflow_type_version} />
+                  <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_type_version} />
                 </Box>
                 <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
                   <Typography children="Workflow Engine Ver.:" sx={{ fontWeight: "bold", minWidth: "200px", letterSpacing: "0.05rem" }} />
-                  <Typography children={runRequestFile.workflow_engine_version} />
+                  <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_engine_version} />
                 </Box>
               </Box>
             )}

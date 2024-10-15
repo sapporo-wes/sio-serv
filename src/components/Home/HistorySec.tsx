@@ -6,7 +6,7 @@ import { useErrorBoundary } from "react-error-boundary"
 import { useAuth } from "react-oidc-context"
 import { Link } from "react-router-dom"
 
-import StateChip from "@/components/StateChip"
+import StatusChip from "@/components/StatusChip"
 import { getAllRuns } from "@/lib/spr"
 import theme from "@/theme"
 import { RunSummary } from "@/types/spr"
@@ -91,12 +91,12 @@ export default function HistorySec({ sx }: HistorySecProps) {
     <Box sx={{ ...sx }}>
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <EventNoteOutlined sx={{ fontSize: "1.6rem", mr: "0.5rem" }} />
-        <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Job History" />
+        <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Run History" />
       </Box>
       <Box sx={{ margin: "1.5rem" }}>
         {
           !auth.isAuthenticated ? (
-            <Typography children="Please login to view job history" />
+            <Typography children="Please login to view run history." />
           ) : loading ? (
             <Typography children="Loading..." />
           ) : (
@@ -111,14 +111,14 @@ export default function HistorySec({ sx }: HistorySecProps) {
                 <Table size="small">
                   <TableHead>
                     <TableRow>
-                      {["Run ID", "State", "Start Time", "End Time"].map((header) => (
+                      {["Run ID", "Status", "Start Time", "End Time"].map((header) => (
                         <TableCell
                           key={header}
                           sx={{
                             borderBottom: visibleRows.length > 0 ? `1px solid ${theme.palette.grey[500]}` : "none",
                             fontWeight: "bold",
                           }}
-                          align={["State", "Start Time", "End Time"].includes(header) ? "center" : "left"}
+                          align={["Status", "Start Time", "End Time"].includes(header) ? "center" : "left"}
                         >
                           {(["Start Time", "End Time"].includes(header)) ? (
                             <TableSortLabel
@@ -138,7 +138,7 @@ export default function HistorySec({ sx }: HistorySecProps) {
                     {visibleRows.map((run) => (
                       <TableRow key={run.run_id}>
                         <TableCell>
-                          <Link to={`/jobs/${run.run_id}`} style={{ textDecoration: "none" }}>
+                          <Link to={`/runs/${run.run_id}`} style={{ textDecoration: "none" }}>
                             <Typography
                               children={shortenUUID(run.run_id)}
                               sx={{
@@ -150,7 +150,7 @@ export default function HistorySec({ sx }: HistorySecProps) {
                           </Link>
                         </TableCell>
                         <TableCell align="center">
-                          <StateChip state={run.state ?? "UNKNOWN"} />
+                          <StatusChip state={run.state ?? "UNKNOWN"} />
                         </TableCell>
                         <TableCell align="center">
                           {run.start_time &&

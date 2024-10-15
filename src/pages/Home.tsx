@@ -16,6 +16,7 @@ export default function Home() {
         <SingleRunSec sx={{ margin: "1.5rem 0" }} />
         <Divider />
         <HistorySec sx={{ margin: "1.5rem 0" }} />
+        {/* ListAltOutlined */}
       </Container>
       <AppFooter />
     </Box >

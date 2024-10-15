@@ -4,7 +4,7 @@ import { SxProps } from "@mui/system"
 import theme from "@/theme"
 import { State } from "@/types/spr"
 
-interface StateChipProps {
+interface StatusChipProps {
   sx?: SxProps
   state: State
 }
@@ -17,7 +17,7 @@ const toLabel = (str: string): string => {
     .join(" ")
 }
 
-const getStateChipColor = (state: State) => {
+const getStatusChipColor = (state: State) => {
   if (state === "QUEUED") {
     return { label: toLabel(state), color: colors.purple[400] }
   }
@@ -40,8 +40,8 @@ const getStateChipColor = (state: State) => {
   return { label: "Unknown", color: theme.palette.grey[500] }
 }
 
-export default function StateChip({ sx, state }: StateChipProps) {
-  const { label, color } = getStateChipColor(state)
+export default function StatusChip({ sx, state }: StatusChipProps) {
+  const { label, color } = getStatusChipColor(state)
 
   return (
     <Chip
