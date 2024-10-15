@@ -40,25 +40,25 @@ export default function AuthHelper({ children }: AutomaticSignInProps) {
     }
   }, [auth, hasTriedSignin])
 
-  // Automatic renew token
-  useEffect(() => {
-    const refreshTokenBeforeExpiry = () => {
-      if (auth.user?.expires_at) {
-        const expirationTime = auth.user.expires_at * 1000 - Date.now()
-        const refreshTime = expirationTime - 1000 * 60 // 1 minutes before expiration
-        if (refreshTime > 0) {
-          const timeoutId = setTimeout(() => {
-            auth.signinSilent()
-          }, refreshTime)
-          return () => clearTimeout(timeoutId)
-        }
-      }
-    }
+  // Automatic renew token (TODO: now using client feature)
+  // useEffect(() => {
+  //   const refreshTokenBeforeExpiry = () => {
+  //     if (auth.user?.expires_at) {
+  //       const expirationTime = auth.user.expires_at * 1000 - Date.now()
+  //       const refreshTime = expirationTime - 1000 * 60 // 1 minutes before expiration
+  //       if (refreshTime > 0) {
+  //         const timeoutId = setTimeout(() => {
+  //           auth.signinSilent()
+  //         }, refreshTime)
+  //         return () => clearTimeout(timeoutId)
+  //       }
+  //     }
+  //   }
 
-    if (auth.isAuthenticated) {
-      refreshTokenBeforeExpiry()
-    }
-  }, [auth])
+  //   if (auth.isAuthenticated) {
+  //     refreshTokenBeforeExpiry()
+  //   }
+  // }, [auth])
 
   return <>{children}</>
 }

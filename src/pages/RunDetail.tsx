@@ -45,6 +45,13 @@ export default function RunDetail() {
     }
   }, [auth]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // For re-execution
+  useEffect(() => {
+    if (!auth.isLoading && auth.isAuthenticated) {
+      fetchRun()
+    }
+  }, [auth, runId]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const mainContent = () => {
     if (auth.isLoading) {
       return <Typography children="Loading..." />

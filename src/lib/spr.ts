@@ -63,6 +63,25 @@ export const jsonPathToNest = (wfParams: Record<string, unknown>): Record<string
   return nestedParams
 }
 
+export const nestToJsonPath = (wfParams: Record<string, unknown>): Record<string, unknown> => {
+  const flattenedParams: Record<string, unknown> = {}
+
+  const flatten = (obj: Record<string, unknown>, parentKey = "") => {
+    Object.entries(obj).forEach(([key, value]) => {
+      const newKey = parentKey === "" ? key : `${parentKey}.${key}`
+      if (typeof value === "object" && value !== null && !Array.isArray(value)) {
+        flatten(value as Record<string, unknown>, newKey)
+      } else {
+        flattenedParams[newKey] = value
+      }
+    })
+  }
+
+  flatten(wfParams)
+
+  return flattenedParams
+}
+
 export const postRuns = async (runRequestFile: SprRunRequestFile, wfParams: Record<string, unknown>, token: string): Promise<RunId> => {
   try {
     const formData = runRequestToFormData(runRequestFile, wfParams)
@@ -177,3 +196,4 @@ export const getAllRuns = async (
 
   return allRuns
 }
+
