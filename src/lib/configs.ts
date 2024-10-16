@@ -142,3 +142,85 @@ export const convertToSchemaForForm = (uiTable: UITableRow[]): JSONSchema => {
 
   return schema
 }
+
+const batchTemplateHeader = (uiTable: UITableRow[]): string[] => {
+  return uiTable.map((row) => `"${row.title} (${row.type}${row.required ? "; required" : ""})"`)
+}
+
+export const convertToBatchTemplate = (uiTable: UITableRow[]): string => {
+  const header = batchTemplateHeader(uiTable)
+  const egRow = uiTable.map((row) => row.default ?? "")
+  return `${header.join(",")}\n${egRow.join(",")}`
+}
+
+interface ValidationResult {
+  success: boolean
+  data: Record<string, unknown>[]
+  errors: string[]
+}
+
+/**
+ * Validates the inputted CSB template content against the UI Table.
+ *
+ * The validation includes:
+ * 1. Whether the header row is correct
+ * 2. Whether each row has the correct number of elements
+ * 3. Whether each row is parsed and adheres to the JSON schema based on the UI Table
+ *
+ * The validation result is returned as an array of natural language error messages.
+ * Example error messages include:
+ * - "Header Row: Incorrect header format (Expected: ..., Actual: ...)"
+ * - "Row 2: Incorrect number of elements"
+ * - "Row 3: JSON schema error (Error: ...)"
+ */
+export const validateInputTemplate = (content: string, uiTable: UITableRow[]): ValidationResult => {
+  const result: ValidationResult = {
+    success: true,
+    errors: [],
+    data: [],
+  }
+  const jsonSchema = convertToSchemaForForm(uiTable)
+  const rows = content.split("\n").filter((line) => line !== "")
+  const inputHeader = rows[0].split(",")
+  const expectedHeader = batchTemplateHeader(uiTable)
+
+  // 1. Validate header row
+  if (inputHeader.join(",") !== expectedHeader.join(",")) {
+    result.errors.push(`Header Row: Incorrect header format (Expected: ${expectedHeader.join(",")}, Actual: ${inputHeader.join(",")})`)
+  }
+
+  for (let i = 1; i < rows.length; i++) {
+    const cols = rows[i].split(",")
+
+    // 2. Validate each row (starting from row 2
+    if (cols.length !== expectedHeader.length) {
+      result.errors.push(`Row ${i + 1}: Incorrect number of elements`)
+      continue
+    }
+
+    // 3. Validate JSON schema
+    const wfParams: Record<string, unknown> = {}
+    cols.forEach((col, j) => {
+      if (uiTable[j].type === "number") {
+        wfParams[uiTable[j].jsonPath] = isNaN(Number(col)) ? col : Number(col)
+      } else if (uiTable[j].type === "boolean") {
+        wfParams[uiTable[j].jsonPath] = col === "true" ? true : col === "false" ? false : col
+      } else {
+        wfParams[uiTable[j].jsonPath] = col
+      }
+    })
+    const ajv = new Ajv()
+    const valid = ajv.validate(jsonSchema, wfParams)
+    if (!valid) {
+      result.errors.push(`Row ${i + 1}: JSONSchema error (Error: ${ajv.errorsText(ajv.errors)})`)
+    } else {
+      result.data.push(wfParams)
+    }
+  }
+
+  if ((result.errors ?? []).length > 0) {
+    result.success = false
+  }
+
+  return result
+}

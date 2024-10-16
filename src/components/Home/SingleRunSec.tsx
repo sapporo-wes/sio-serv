@@ -65,13 +65,12 @@ export default function SingleRunSec({ sx }: SingleRunSecProps) {
           sx={{ textTransform: "none", mt: "0.5rem" }}
           startIcon={<RocketLaunchOutlined />}
           disabled={!auth.isAuthenticated || btnDisabled}
-        >
-          {
+          children={
             auth.isAuthenticated ?
               "Execute Workflow" :
               "Execute Workflow (Please Sign In)"
           }
-        </Button>
+        />
       </Box>
     </Box>
   )

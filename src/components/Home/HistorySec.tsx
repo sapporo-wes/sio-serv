@@ -1,13 +1,15 @@
-import { EventNoteOutlined } from "@mui/icons-material"
-import { Box, TableContainer, Typography, Paper, Table, TableCell, TableHead, TableRow, TableBody, TablePagination, TableSortLabel } from "@mui/material"
+import { EventNoteOutlined, FileUploadOutlined, ReplayOutlined } from "@mui/icons-material"
+import { Box, TableContainer, Typography, Paper, Table, TableCell, TableHead, TableRow, TableBody, TablePagination, TableSortLabel, Button, Checkbox, FormControlLabel } from "@mui/material"
 import { SxProps } from "@mui/system"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useErrorBoundary } from "react-error-boundary"
 import { useAuth } from "react-oidc-context"
 import { Link } from "react-router-dom"
+import { useRecoilState, useSetRecoilState } from "recoil"
 
 import StatusChip from "@/components/StatusChip"
 import { getAllRuns } from "@/lib/spr"
+import { showBatchRunsOnlyAtom, batchRunIdsAtom, uploadedBatchFileAtom } from "@/store/wfExec"
 import theme from "@/theme"
 import { RunSummary } from "@/types/spr"
 
@@ -40,10 +42,44 @@ export default function HistorySec({ sx }: HistorySecProps) {
   const { showBoundary } = useErrorBoundary()
   const [runs, setRuns] = useState<RunSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const [showBatchRunsOnly, setShowBatchRunsOnly] = useRecoilState(showBatchRunsOnlyAtom)
+  const [batchRunIds, setBatchRunIds] = useRecoilState(batchRunIdsAtom)
+  const setUploadedBatchFile = useSetRecoilState(uploadedBatchFileAtom)
+
+  // Import Batch Runs
+  const [uploadError, setUploadError] = useState<boolean>(false)
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
+  const handleImportButtonClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click()
+  }
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = async () => {
+        try {
+          const rows = (reader.result as string).split("\n").filter(row => row.trim() !== "")
+          const headers = rows[0].split(",")
+          if (headers[0] !== "Run ID") {
+            setUploadError(true)
+            return
+          }
+          const importedBatchRunIds = rows.slice(1).map(row => row.split(",")[0])
+          setBatchRunIds(importedBatchRunIds)
+          setUploadedBatchFile([])
+        } catch (e) {
+          console.error(e)
+          setUploadError(true)
+          setTimeout(() => setUploadError(false), 5000)
+        }
+      }
+      reader.readAsText(file)
+    }
+  }
 
   // Paging
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [rowsPerPage, setRowsPerPage] = useState(5)
   const handleChangePage = (_event: unknown, newPage: number) => setPage(newPage)
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10))
@@ -59,23 +95,25 @@ export default function HistorySec({ sx }: HistorySecProps) {
     setOrderBy(property)
   }
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const runs = await getAllRuns(auth.user!.access_token)
-        setRuns(runs)
-        setLoading(false)
-      } catch (e) {
-        showBoundary(e)
-      }
+  const fetchData = async () => {
+    setLoading(true)
+    try {
+      const runs = await getAllRuns(auth.user!.access_token)
+      setRuns(runs)
+      setLoading(false)
+    } catch (e) {
+      showBoundary(e)
     }
+  }
 
-    if (auth.isAuthenticated && loading)
+  useEffect(() => {
+    if (auth.isAuthenticated)
       fetchData()
-  }, [auth.isAuthenticated, auth.user, loading, showBoundary])
+  }, [auth.isAuthenticated, auth.user, batchRunIds]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const visibleRows = useMemo(() => {
-    const sortedRuns = [...runs].sort((a, b) => {
+    const filteredRuns = showBatchRunsOnly ? runs.filter(run => batchRunIds.includes(run.run_id)) : runs
+    const sortedRuns = [...filteredRuns].sort((a, b) => {
       const dateA = orderBy === "Start Time" ? a.start_time : a.end_time
       const dateB = orderBy === "Start Time" ? b.start_time : b.end_time
       if (nothingValue(dateA) && nothingValue(dateB)) return 0
@@ -85,13 +123,53 @@ export default function HistorySec({ sx }: HistorySecProps) {
       return order === "asc" ? compareValue : -compareValue
     })
     return sortedRuns.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-  }, [runs, page, rowsPerPage, order, orderBy])
+  }, [runs, page, rowsPerPage, order, orderBy, showBatchRunsOnly, batchRunIds])
 
   return (
     <Box sx={{ ...sx }}>
-      <Box sx={{ display: "flex", alignItems: "center" }}>
-        <EventNoteOutlined sx={{ fontSize: "1.6rem", mr: "0.5rem" }} />
-        <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Run History" />
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        {/* Title */}
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          <EventNoteOutlined sx={{ fontSize: "1.6rem", mr: "0.5rem" }} />
+          <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Run History" />
+        </Box>
+
+        {/* Buttons */}
+        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "flex-end", mr: "1.5rem" }}>
+          <FormControlLabel
+            control={<Checkbox
+              checked={showBatchRunsOnly}
+              onChange={() => setShowBatchRunsOnly(!showBatchRunsOnly)}
+            />}
+            label="Show Batch Runs Only"
+            sx={{ fontSize: "0.8rem", color: theme.palette.grey[700] }}
+          />
+          <Button
+            sx={{ textTransform: "none", width: "12rem", mr: "1rem" }}
+            variant="outlined"
+            startIcon={<FileUploadOutlined />}
+            children={
+              uploadError ?
+                "Failed to Import" :
+                "Import Batch Runs"
+            }
+            color={uploadError ? "secondary" : "primary"}
+            onClick={handleImportButtonClick}
+          />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          <Button
+            children="Reload"
+            sx={{ textTransform: "none" }}
+            variant="outlined"
+            startIcon={<ReplayOutlined />}
+            onClick={fetchData}
+          />
+        </Box>
       </Box>
       <Box sx={{ margin: "1.5rem" }}>
         {
@@ -101,7 +179,8 @@ export default function HistorySec({ sx }: HistorySecProps) {
             <Typography children="Loading..." />
           ) : (
             // main content
-            <Box>
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              {/* Table */}
               <TableContainer
                 component={Paper}
                 sx={{
@@ -169,7 +248,7 @@ export default function HistorySec({ sx }: HistorySecProps) {
               </TableContainer>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <TablePagination
-                  rowsPerPageOptions={[10, 20, 50]}
+                  rowsPerPageOptions={[5, 10, 20, 50]}
                   count={runs.length}
                   rowsPerPage={rowsPerPage}
                   page={page}

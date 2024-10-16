@@ -12,6 +12,7 @@ import AuthCallback from "@/pages/AuthCallback"
 import ErrorFallback from "@/pages/ErrorFallback"
 import Home from "@/pages/Home"
 import RunDetail from "@/pages/RunDetail"
+import SilentRenew from "@/pages/SilentRenew"
 import theme from "@/theme"
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/runs/:runId" element={<RunDetail />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
+                    <Route path="/auth/silent_renew" element={<SilentRenew />} />
                   </Routes>
                 </AuthHelper>
               </AuthProvider>

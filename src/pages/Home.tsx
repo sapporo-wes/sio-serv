@@ -2,6 +2,7 @@ import { Box, Container, Divider } from "@mui/material"
 
 import AppFooter from "@/components/AppFooter"
 import AppHeader from "@/components/AppHeader"
+import BatchRunsSec from "@/components/Home/BatchRunsSec"
 import HistorySec from "@/components/Home/HistorySec"
 import OverviewSec from "@/components/Home/OverviewSec"
 import SingleRunSec from "@/components/Home/SingleRunSec"
@@ -15,8 +16,9 @@ export default function Home() {
         <Divider />
         <SingleRunSec sx={{ margin: "1.5rem 0" }} />
         <Divider />
+        <BatchRunsSec sx={{ margin: "1.5rem 0" }} />
+        <Divider />
         <HistorySec sx={{ margin: "1.5rem 0" }} />
-        {/* ListAltOutlined */}
       </Container>
       <AppFooter />
     </Box >

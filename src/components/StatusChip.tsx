@@ -1,7 +1,7 @@
 import { Chip, colors } from "@mui/material"
 import { SxProps } from "@mui/system"
 
-import theme from "@/theme"
+import { hexToRgba } from "@/theme"
 import { State } from "@/types/spr"
 
 interface StatusChipProps {
@@ -19,25 +19,25 @@ const toLabel = (str: string): string => {
 
 const getStatusChipColor = (state: State) => {
   if (state === "QUEUED") {
-    return { label: toLabel(state), color: colors.purple[400] }
+    return { label: toLabel(state), color: hexToRgba(colors.purple[400], 0.8) }
   }
   if (["INITIALIZING", "RUNNING", "PAUSED"].includes(state)) {
-    return { label: toLabel(state), color: colors.blue[400] }
+    return { label: toLabel(state), color: hexToRgba(colors.blue[400], 0.9) }
   }
   if (state === "COMPLETE") {
-    return { label: toLabel(state), color: colors.green[500] }
+    return { label: toLabel(state), color: hexToRgba(colors.green[500], 0.8) }
   }
   if (["EXECUTOR_ERROR", "SYSTEM_ERROR"].includes(state)) {
-    return { label: toLabel(state), color: colors.red[400] }
+    return { label: toLabel(state), color: hexToRgba(colors.red[400], 0.8) }
   }
   if (["CANCELED", "CANCELING", "PREEMPTED"].includes(state)) {
-    return { label: toLabel(state), color: colors.orange[500] }
+    return { label: toLabel(state), color: hexToRgba(colors.orange[500], 0.9) }
   }
   if (["DELETED", "DELETING"].includes(state)) {
-    return { label: toLabel(state), color: theme.palette.grey[500] }
+    return { label: toLabel(state), color: hexToRgba(colors.grey[500], 0.9) }
   }
 
-  return { label: "Unknown", color: theme.palette.grey[500] }
+  return { label: "Unknown", color: hexToRgba(colors.grey[500], 0.8) }
 }
 
 export default function StatusChip({ sx, state }: StatusChipProps) {

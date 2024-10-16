@@ -143,7 +143,7 @@ export const getRuns = async (
   pageToken?: string | null,
   sortOrder?: "asc" | "desc",
   state?: State,
-  run_ids?: string[],
+  runIds?: string[],
   latest?: boolean,
 ): Promise<RunListResponse> => {
   const params = new URLSearchParams()
@@ -151,7 +151,7 @@ export const getRuns = async (
   if (pageToken !== undefined && pageToken !== null) params.set("page_token", pageToken)
   if (sortOrder !== undefined) params.set("sort_order", sortOrder)
   if (state !== undefined) params.set("state", state)
-  if (run_ids !== undefined) run_ids.forEach((run_id) => params.append("run_ids", run_id))
+  if (runIds !== undefined) runIds.forEach((runId) => params.append("run_ids", runId))
   if (latest !== undefined) params.set("latest", latest.toString())
   try {
     const response = await fetch(`${SAPPORO_ENDPOINT}/runs?${params.toString()}`, {
@@ -181,12 +181,13 @@ export const getRuns = async (
 export const getAllRuns = async (
   token: string,
   pageSize = 100,
+  runIds?: string[],
   latest = true,
 ): Promise<RunSummary[]> => {
   const allRuns: RunSummary[] = []
   let nextPageToken: string | undefined | null = undefined
   while (true) {
-    const { runs, next_page_token } = await getRuns(token, pageSize, nextPageToken, undefined, undefined, undefined, latest)
+    const { runs, next_page_token } = await getRuns(token, pageSize, nextPageToken, undefined, undefined, runIds, latest)
     allRuns.push(...runs as RunSummary[])
     if (next_page_token === null || next_page_token === undefined || next_page_token === "") {
       break
@@ -197,3 +198,31 @@ export const getAllRuns = async (
   return allRuns
 }
 
+export const execBatchRuns = async (
+  runRequestFile: SprRunRequestFile,
+  wfParamsArray: Record<string, unknown>[],
+  token: string,
+): Promise<string[]> => {
+  const results = await Promise.allSettled(
+    wfParamsArray.map((wfParams) =>
+      postRuns(runRequestFile, jsonPathToNest(wfParams), token),
+    ),
+  )
+
+  const runIds: string[] = []
+  const errors: string[] = []
+
+  results.forEach((result, i) => {
+    if (result.status === "fulfilled") {
+      runIds.push(result.value.run_id)
+    } else {
+      errors.push(`Failed to execute run ${i + 1}: ${result.reason}`)
+    }
+  })
+
+  if (errors.length > 0) {
+    throw new Error(`Failed to execute batch runs:\n${errors.join("\n")}`)
+  }
+
+  return runIds
+}

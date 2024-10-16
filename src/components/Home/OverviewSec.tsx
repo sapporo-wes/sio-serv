@@ -87,7 +87,7 @@ export default function OverviewSec({ sx }: OverviewSecProps) {
           {/* Workflow URL */}
           <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
             <Typography children="Workflow URL:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
-            <Link href={runRequestFile.workflow_url} target="_blank" children={runRequestFile.workflow_url} sx={{ textDecoration: "none" }} />
+            <Link href={runRequestFile.workflow_url} target="_blank" children={runRequestFile.workflow_url} underline="hover" />
           </Box>
 
           {/* Workflow Type */}
