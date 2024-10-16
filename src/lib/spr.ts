@@ -178,6 +178,46 @@ export const getRuns = async (
   }
 }
 
+export const cancelRun = async (runId: string, token: string): Promise<void> => {
+  try {
+    const response = await fetch(`${SAPPORO_ENDPOINT}/runs/${runId}/cancel`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error, failed to cancel run (runId: ${runId}), status: ${response.status}, statusText ${response.statusText}`)
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(`Failed to cancel run (runId: ${runId}): ${e.message}`)
+    } else {
+      throw new Error(`An unknown error occurred during cancelRun (runId: ${runId})`)
+    }
+  }
+}
+
+export const deleteRun = async (runId: string, token: string): Promise<void> => {
+  try {
+    const response = await fetch(`${SAPPORO_ENDPOINT}/runs/${runId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error, failed to delete run (runId: ${runId}), status: ${response.status}, statusText ${response.statusText}`)
+    }
+  } catch (e) {
+    if (e instanceof Error) {
+      throw new Error(`Failed to delete run (runId: ${runId}): ${e.message}`)
+    } else {
+      throw new Error(`An unknown error occurred during deleteRun (runId: ${runId})`)
+    }
+  }
+}
+
 export const getAllRuns = async (
   token: string,
   pageSize = 100,

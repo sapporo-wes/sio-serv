@@ -140,6 +140,26 @@ export default function ResultSec({ sx, run, tabIndex, setTabIndex }: ResultSecP
                   }}
                 />
               ))}
+              <Box sx={{ display: "flex", flexDirection: "row", gap: "1.5rem", mt: "1rem" }}>
+                <Button
+                  children="Download All Files"
+                  variant="contained"
+                  startIcon={<FileDownloadOutlined />}
+                  sx={{ textTransform: "none" }}
+                  onClick={() => {
+                    downloadFile({ file_name: `sio-serv_${run.run_id}_outputs.zip`, file_url: `${SAPPORO_ENDPOINT}/runs/${run.run_id}/outputs?download=true` })
+                  }}
+                />
+                <Button
+                  children="Download RO-Crate"
+                  variant="contained"
+                  startIcon={<FileDownloadOutlined />}
+                  sx={{ textTransform: "none" }}
+                  onClick={() => {
+                    downloadFile({ file_name: `sio-serv_${run.run_id}_ro-crate.json`, file_url: `${SAPPORO_ENDPOINT}/runs/${run.run_id}/ro-crate` })
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
         )

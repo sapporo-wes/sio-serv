@@ -2,8 +2,11 @@ import { AssignmentOutlined, ReplayOutlined, CancelOutlined, DeleteOutlined } fr
 import { Box, Typography, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, colors } from "@mui/material"
 import { SxProps } from "@mui/system"
 import { useState } from "react"
+import { useErrorBoundary } from "react-error-boundary"
+import { useAuth } from "react-oidc-context"
 
 import StatusChip from "@/components/StatusChip"
+import { cancelRun, deleteRun } from "@/lib/spr"
 import { RunLog } from "@/types/spr"
 
 export interface InfoSecProps {
@@ -27,9 +30,31 @@ const utcTimeToLocal = (utcTime: string) => {
 }
 
 export default function InfoSec({ sx, run, reloadRun }: InfoSecProps) {
+  const auth = useAuth()
+  const { showBoundary } = useErrorBoundary()
   const [dialogOpen, setDialogOpen] = useState<boolean>(false)
+  const [isCancelingOrDeleting, setIsCancelingOrDeleting] = useState<boolean>(false)
   const handleDialogConfirm = (isCancel: boolean) => { // cancel or delete run
-    // TODO: Implement cancel/delete run
+    if (run.run_id === undefined || run.run_id === null) return
+    if (isCancel) {
+      setIsCancelingOrDeleting(true)
+      cancelRun(run.run_id, auth.user!.access_token).then(() => {
+        setIsCancelingOrDeleting(false)
+        reloadRun()
+      }).catch((e) => {
+        setIsCancelingOrDeleting(false)
+        showBoundary(e)
+      })
+    } else {
+      setIsCancelingOrDeleting(true)
+      deleteRun(run.run_id, auth.user!.access_token).then(() => {
+        setIsCancelingOrDeleting(false)
+        reloadRun()
+      }).catch((e) => {
+        setIsCancelingOrDeleting(false)
+        showBoundary(e)
+      })
+    }
   }
 
   return (
@@ -64,7 +89,7 @@ export default function InfoSec({ sx, run, reloadRun }: InfoSecProps) {
                 <DeleteOutlined />
             }
             onClick={() => setDialogOpen(true)}
-            disabled={["DELETED", "DELETING"].includes(run.state ?? "UNKNOWN")}
+            disabled={["DELETED", "DELETING"].includes(run.state ?? "UNKNOWN") || isCancelingOrDeleting}
           />
         </Box>
       </Box>
