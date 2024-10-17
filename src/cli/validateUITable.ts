@@ -13,17 +13,17 @@ interface CliArgs {
 
 const help = () => {
   console.error(`
-Usage: validate-config-files [OPTIONS]
+Usage: validate-ui-table [OPTIONS]
 
 Options:
   -w, --wf-params-schema <file>   Workflow params schema file (required)
   -u, --ui-table <file>           UI table file (required)
-  -r, --run-request <file>         Run request file
+  -r, --run-request <file>        Run request file
   -h, --help                      Show this help message and exit
 
 Examples:
-  validate-config-files -w wf-params-schema.json -u ui-table.tsv
-  validate-config-files --wf-params-schema=wf-params-schema.json --ui-table=ui-table.tsv --run-request=run-request.json
+  validate-ui-table -w wf-params-schema.json -u ui-table.tsv
+  validate-ui-table --wf-params-schema=wf-params-schema.json --ui-table=ui-table.tsv --run-request=run-request.json
 `)
   process.exit(1)
 }

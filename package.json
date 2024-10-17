@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "schema-to-ui-table": "tsx ./src/cli/schemaToUITable.ts",
-    "validate-config-files": "tsx ./src/cli/validateConfigFiles.ts"
+    "validate-ui-table": "tsx ./src/cli/validateUITable.ts"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
