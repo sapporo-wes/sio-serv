@@ -1,7 +1,6 @@
 import { FileDownloadOutlined, RocketLaunchOutlined, EditOutlined, UndoOutlined } from "@mui/icons-material"
 import { Box, Tabs, Tab, Typography, Link, Button, Divider } from "@mui/material"
 import { SxProps } from "@mui/system"
-import Form from "@rjsf/mui"
 import validator from "@rjsf/validator-ajv8"
 import { useState } from "react"
 import { useErrorBoundary } from "react-error-boundary"
@@ -10,6 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { useRecoilValue } from "recoil"
 
 import CodeBlock from "@/components/CodeBlock"
+import OurForm from "@/components/Form"
 import { convertToSchemaForForm } from "@/lib/configs"
 import { jsonPathToNest, nestToJsonPath, postRuns } from "@/lib/spr"
 import { uiTableAtom, runRequestFileAtom } from "@/store/configs"
@@ -175,7 +175,7 @@ export default function ResultSec({ sx, run, tabIndex, setTabIndex }: ResultSecP
             </Box>
             {/* Re-exec form */}
             <Box sx={{ margin: "0 1.5rem 1.5rem" }}>
-              <Form
+              <OurForm
                 schema={schemaForForm}
                 uiSchema={uiSchema}
                 validator={validator}

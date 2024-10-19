@@ -1,7 +1,6 @@
 import { RocketLaunchOutlined } from "@mui/icons-material"
 import { Box, Typography, Button } from "@mui/material"
 import { SxProps } from "@mui/system"
-import Form from "@rjsf/mui"
 import validator from "@rjsf/validator-ajv8"
 import { useState } from "react"
 import { useErrorBoundary } from "react-error-boundary"
@@ -9,6 +8,7 @@ import { useAuth } from "react-oidc-context"
 import { useNavigate } from "react-router-dom"
 import { useRecoilValue, useRecoilState } from "recoil"
 
+import OurForm from "@/components/Form"
 import { convertToSchemaForForm } from "@/lib/configs"
 import { jsonPathToNest, postRuns } from "@/lib/spr"
 import { uiTableAtom, runRequestFileAtom } from "@/store/configs"
@@ -52,7 +52,7 @@ export default function SingleRunSec({ sx }: SingleRunSecProps) {
         <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Execute Single Run" />
       </Box>
       <Box sx={{ margin: "0 1.5rem" }}>
-        <Form
+        <OurForm
           schema={schemaForForm}
           uiSchema={uiSchema}
           validator={validator}
