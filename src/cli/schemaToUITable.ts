@@ -15,7 +15,7 @@ interface CliArgs {
 
 const help = () => {
   console.error(`
-Usage: schema-to-table [OPTIONS]
+Usage: schema-to-ui-table [OPTIONS]
 
 Options:
   -i, --input <file>     Input workflow params schema file (required)
@@ -25,8 +25,8 @@ Options:
   -h, --help             Show this help message and exit
 
 Examples:
-  schema-to-table -i wf-params-schema.json -o ui-table.csv
-  schema-to-table --input=wf-params-schema.json --pipe --format=tsv
+  schema-to-ui-table -i wf-params-schema.json -o ui-table.csv
+  schema-to-ui-table --input=wf-params-schema.json --pipe --format=tsv
 `)
   process.exit(1)
 }
