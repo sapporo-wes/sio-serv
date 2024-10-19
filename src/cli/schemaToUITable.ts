@@ -1,3 +1,4 @@
+import Papa from "papaparse"
 import { fileURLToPath } from "url"
 import { parseArgs } from "util"
 
@@ -18,14 +19,14 @@ Usage: schema-to-table [OPTIONS]
 
 Options:
   -i, --input <file>     Input workflow params schema file (required)
-  -o, --output <file>    Output UI table file (default: ui-table.tsv)
-  -f, --format <format>  Output format: tsv or csv (default: tsv)
+  -o, --output <file>    Output UI table file (default: ui-table.csv)
+  -f, --format <format>  Output format: csv or tsv (default: csv)
   -p, --pipe             Write output to stdout
   -h, --help             Show this help message and exit
 
 Examples:
-  schema-to-table -i wf-params-schema.json -o ui-table.tsv
-  schema-to-table --input=wf-params-schema.json --pipe --format=csv
+  schema-to-table -i wf-params-schema.json -o ui-table.csv
+  schema-to-table --input=wf-params-schema.json --pipe --format=tsv
 `)
   process.exit(1)
 }
@@ -35,8 +36,8 @@ const parseCliArgs = (args: string[]): CliArgs => {
     args,
     options: {
       input: { type: "string", short: "i" },
-      output: { type: "string", short: "o", default: "ui-table.tsv" },
-      format: { type: "string", short: "f", default: "tsv" },
+      output: { type: "string", short: "o", default: "ui-table.csv" },
+      format: { type: "string", short: "f", default: "csv" },
       pipe: { type: "boolean", short: "p" },
       help: { type: "boolean", short: "h" },
     },
@@ -58,7 +59,7 @@ const parseCliArgs = (args: string[]): CliArgs => {
   })()
   const outputPath = resolvePath(values.output!)
   const outputFormat = (() => {
-    if (values.format !== "tsv" && values.format !== "csv") {
+    if (values.format !== "csv" && values.format !== "tsv") {
       console.error(`Error: Invalid output format: ${values.format}`)
       process.exit(1)
     }
@@ -70,10 +71,23 @@ const parseCliArgs = (args: string[]): CliArgs => {
 
 const tableToString = (rows: UITableRow[], format: CliArgs["outputFormat"]): string => {
   const delimiter = format === "tsv" ? "\t" : ","
-  return [
-    UI_TABLE_HEADER.join(delimiter),
-    ...rows.map(row => [row.jsonPath, row.title, row.description, row.type, row.default, row.required, row.editable].join(delimiter)),
-  ].join("\n")
+  const data: Record<typeof UI_TABLE_HEADER[number], string>[] = rows.map(row => ({
+    "Parameter Key": row.jsonPath,
+    "Title": row.title,
+    "Description": row.description.replace(/\n/g, " "),
+    "UI Component Type": row.type,
+    "Default": String(row.default),
+    "Required": String(row.required),
+    "Editable": String(row.editable),
+  }))
+
+  return Papa.unparse(data, {
+    delimiter,
+    quotes: format === "csv", // CSV の場合はダブルクオートで囲む
+    newline: "\n",
+    header: true,
+    columns: UI_TABLE_HEADER,
+  })
 }
 
 const main = () => {

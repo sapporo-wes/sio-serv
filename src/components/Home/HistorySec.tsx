@@ -60,13 +60,15 @@ export default function HistorySec({ sx }: HistorySecProps) {
         try {
           const rows = (reader.result as string).split("\n").filter(row => row.trim() !== "")
           const headers = rows[0].split(",")
-          if (headers[0] !== "Run ID") {
+          if (headers[0] !== "\"Run ID\"") {
             setUploadError(true)
+            setTimeout(() => setUploadError(false), 5000)
             return
           }
           const importedBatchRunIds = rows.slice(1).map(row => row.split(",")[0])
           setBatchRunIds(importedBatchRunIds)
           setUploadedBatchFile([])
+          setShowBatchRunsOnly(true)
         } catch (e) {
           console.error(e)
           setUploadError(true)
@@ -79,7 +81,7 @@ export default function HistorySec({ sx }: HistorySecProps) {
 
   // Paging
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(5)
+  const [rowsPerPage, setRowsPerPage] = useState(10)
   const handleChangePage = (_event: unknown, newPage: number) => setPage(newPage)
   const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
     setRowsPerPage(parseInt(event.target.value, 10))
@@ -248,8 +250,8 @@ export default function HistorySec({ sx }: HistorySecProps) {
               </TableContainer>
               <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
                 <TablePagination
-                  rowsPerPageOptions={[5, 10, 20, 50]}
-                  count={runs.length}
+                  rowsPerPageOptions={[10, 20, 50]}
+                  count={showBatchRunsOnly ? batchRunIds.length : runs.length}
                   rowsPerPage={rowsPerPage}
                   page={page}
                   onPageChange={handleChangePage}

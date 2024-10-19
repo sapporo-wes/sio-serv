@@ -22,8 +22,8 @@ Options:
   -h, --help                      Show this help message and exit
 
 Examples:
-  validate-ui-table -w wf-params-schema.json -u ui-table.tsv
-  validate-ui-table --wf-params-schema=wf-params-schema.json --ui-table=ui-table.tsv --run-request=run-request.json
+  validate-ui-table -w wf-params-schema.json -u ui-table.csv
+  validate-ui-table --wf-params-schema=wf-params-schema.json --ui-table=ui-table.csv --run-request=run-request.json
 `)
   process.exit(1)
 }

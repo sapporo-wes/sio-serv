@@ -7,6 +7,16 @@
 
 ```bash=
 # At the root of the repository
-npm run schema-to-table -- -i ./tests/wf-params-schema.json -o ./tests/ui-table.tsv
-npm run validate-config-files -- -w ./tests/wf-params-schema.json -u ./tests/ui-table.tsv -r ./tests/run-request.json
+npm run schema-to-ui-table -- -i ./tests/wf-params-schema.json -o ./tests/ui-table.csv
+npm run validate-ui-table -- -w ./tests/wf-params-schema.json -u ./tests/ui-table.csv -r ./tests/run-request.json
+
+npm run schema-to-ui-table -- -i ./tests/wf-params-schema-nf-core-sarek.json -o ./tests/ui-table-nf-core-sarek.csv
+npm run validate-ui-table -- -w ./tests/wf-params-schema-nf-core-sarek.json -u ./tests/ui-table-nf-core-sarek.csv -r ./tests/run-request.json
+```
+
+`compose.yml`:
+
+```yaml=
+      - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema.json
+      - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table.csv
 ```

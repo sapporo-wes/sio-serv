@@ -43,13 +43,6 @@ export default function RunDetail() {
     if (!auth.isLoading && auth.isAuthenticated) {
       fetchRun()
     }
-  }, [auth]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // For re-execution
-  useEffect(() => {
-    if (!auth.isLoading && auth.isAuthenticated) {
-      fetchRun()
-    }
   }, [auth, runId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const mainContent = () => {

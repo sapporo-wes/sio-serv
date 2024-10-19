@@ -1,7 +1,6 @@
 import { InfoOutlined } from "@mui/icons-material"
-import { Box, Typography, Link, Tabs, Tab } from "@mui/material"
+import { Box, Typography, Link } from "@mui/material"
 import { SxProps } from "@mui/system"
-import { useState } from "react"
 import { useRecoilValue } from "recoil"
 
 import CodeBlock from "@/components/CodeBlock"
@@ -13,11 +12,7 @@ export interface OverviewSecProps {
 }
 
 const ROW_HEIGHT = "2rem"
-const HEADER_COL_WIDTH = "160px"
-
-const hasExtraConfig = (runRequestFile: SprRunRequestFile) => {
-  return hasValue(runRequestFile, "workflow_type_version") || hasValue(runRequestFile, "workflow_engine_version") || hasValue(runRequestFile, "workflow_engine_parameters") || hasValue(runRequestFile, "workflow_attachment_obj") || hasValue(runRequestFile, "tags")
-}
+const HEADER_COL_WIDTH = "12rem"
 
 const hasValue = (runRequestFile: SprRunRequestFile, key: string): boolean => {
   const value = (runRequestFile as any)[key] // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -38,48 +33,14 @@ const hasValue = (runRequestFile: SprRunRequestFile, key: string): boolean => {
   return true
 }
 
-const createTabHeaders = (runRequestFile: SprRunRequestFile): string[] => {
-  const tabs = []
-  if (hasValue(runRequestFile, "workflow_type_version") || hasValue(runRequestFile, "workflow_engine_version")) {
-    tabs.push("Other Cfg.")
-  }
-  if (hasValue(runRequestFile, "workflow_engine_parameters")) {
-    tabs.push("Engine Params.")
-  }
-  if (hasValue(runRequestFile, "workflow_attachment_obj")) {
-    tabs.push("Attachments")
-  }
-  if (hasValue(runRequestFile, "tags")) {
-    tabs.push("Tags")
-  }
-
-  return tabs
-}
-
-// TODO: Remove this mock data
-// const runRequestFile: SprRunRequestFile = {
-//   workflow_type: "workflow_type",
-//   workflow_type_version: "workflow_type_version",
-//   workflow_engine: "workflow_engine",
-//   workflow_engine_version: "workflow_engine_version",
-//   workflow_engine_parameters: { key: "value" },
-//   workflow_url: "workflow_url",
-//   workflow_attachment_obj: [{ file_name: "file_name", file_url: "file_url" }],
-//   tags: {
-//     key: "value",
-//   },
-// }
-
 export default function OverviewSec({ sx }: OverviewSecProps) {
   const runRequestFile = useRecoilValue(runRequestFileAtom)
-  const tabHeaders = createTabHeaders(runRequestFile)
-  const [tabIndex, setTabIndex] = useState(tabHeaders.length > 0 ? tabHeaders[0] : "")
 
   return (
     <Box sx={{ ...sx }} >
       <Box sx={{ display: "flex", alignItems: "center" }}>
         <InfoOutlined sx={{ fontSize: "1.6rem", mr: "0.5rem" }} />
-        <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Workflow & Run Cfg. Overview" />
+        <Typography variant="h2" sx={{ fontSize: "1.8rem" }} children="Workflow & Run Config Overview" />
       </Box>
 
       <Box sx={{ display: "flex", "flexDirection": "column", margin: "1rem 1.5rem" }}>
@@ -96,51 +57,52 @@ export default function OverviewSec({ sx }: OverviewSecProps) {
             <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_type} />
           </Box>
 
+          {/* Workflow Type Version */}
+          {hasValue(runRequestFile, "workflow_type_version") && (
+            <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
+              <Typography children="Workflow Type Ver.:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
+              <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_type_version} />
+            </Box>
+          )}
+
           {/* Workflow Engine */}
           <Box sx={{ display: "flex", flexDirection: "row", height: ROW_HEIGHT, alignItems: "center" }}>
             <Typography children="Workflow Engine:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
             <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_engine} />
           </Box>
-        </Box>
 
-        {hasExtraConfig(runRequestFile) && (
-          <Box sx={{ mt: "0.5rem" }}>
-            <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-              <Tabs value={tabIndex} onChange={(_, newValue) => setTabIndex(newValue)} >
-                {tabHeaders.map((header) => <Tab key={header} label={header} value={header} sx={{ textTransform: "none" }} />)}
-              </Tabs>
+          {/* Workflow Type Engine Version */}
+          {hasValue(runRequestFile, "workflow_engine_version") && (
+            <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
+              <Typography children="Workflow Engine Ver.:" sx={{ fontWeight: "bold", minWidth: HEADER_COL_WIDTH, letterSpacing: "0.05rem" }} />
+              <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_engine_version} />
             </Box>
+          )}
 
-            {tabIndex === "Other Cfg." && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: "0.75rem", mt: "1.5rem" }}>
-                <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
-                  <Typography children="Workflow Type Ver.:" sx={{ fontWeight: "bold", minWidth: "200px", letterSpacing: "0.05rem" }} />
-                  <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_type_version} />
-                </Box>
-                <Box sx={{ display: "flex", flexDirection: "row", minHeight: ROW_HEIGHT, alignItems: "center" }}>
-                  <Typography children="Workflow Engine Ver.:" sx={{ fontWeight: "bold", minWidth: "200px", letterSpacing: "0.05rem" }} />
-                  <Typography sx={{ fontFamily: "monospace", fontSize: "1.1rem" }} children={runRequestFile.workflow_engine_version} />
-                </Box>
-              </Box>
-            )}
+          {/* Workflow Engine Parameters */}
+          {hasValue(runRequestFile, "workflow_engine_parameters") && (
+            <Box sx={{ mt: "0.25rem" }}>
+              <Typography children="Workflow Engine Params:" sx={{ fontWeight: "bold", letterSpacing: "0.05rem", mb: "0.5rem" }} />
+              <CodeBlock codeString={JSON.stringify(runRequestFile.workflow_engine_parameters, null, 2)} language="json" />
+            </Box>
+          )}
 
-            {tabIndex === "Engine Params." && (
-              <CodeBlock codeString={JSON.stringify(runRequestFile.workflow_engine_parameters, null, 2)} language="json" sx={{ margin: "1.5rem 1.5rem 0" }} />
-            )}
+          {/* Workflow Attachment */}
+          {hasValue(runRequestFile, "workflow_attachment_obj") && (
+            <Box sx={{ mt: "0.25rem" }}>
+              <Typography children="Workflow Attachment:" sx={{ fontWeight: "bold", letterSpacing: "0.05rem", mb: "0.5rem" }} />
+              <CodeBlock codeString={JSON.stringify(runRequestFile.workflow_attachment_obj, null, 2)} language="json" />
+            </Box>
+          )}
 
-            {tabIndex === "Attachments" && (
-              <Box>
-                <CodeBlock codeString={JSON.stringify(runRequestFile.workflow_attachment_obj, null, 2)} language="json" sx={{ margin: "1.5rem 1.5rem 0" }} />
-              </Box>
-            )}
-
-            {tabIndex === "Tags" && (
-              <Box>
-                <CodeBlock codeString={JSON.stringify(runRequestFile.tags, null, 2)} language="json" sx={{ margin: "1.5rem 1.5rem 0" }} />
-              </Box>
-            )}
-          </Box>
-        )}
+          {/* Tags */}
+          {hasValue(runRequestFile, "tags") && (
+            <Box sx={{ mt: "0.25rem" }}>
+              <Typography children="Tags:" sx={{ fontWeight: "bold", letterSpacing: "0.05rem", mb: "0.5rem" }} />
+              <CodeBlock codeString={JSON.stringify(runRequestFile.tags, null, 2)} language="json" />
+            </Box>
+          )}
+        </Box>
       </Box>
     </Box >
   )

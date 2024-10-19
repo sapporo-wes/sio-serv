@@ -11,6 +11,7 @@ import DependencyChecker from "@/components/DependencyChecker"
 import AuthCallback from "@/pages/AuthCallback"
 import ErrorFallback from "@/pages/ErrorFallback"
 import Home from "@/pages/Home"
+import NotFound from "@/pages/NotFound"
 import RunDetail from "@/pages/RunDetail"
 import SilentRenew from "@/pages/SilentRenew"
 import theme from "@/theme"
@@ -29,7 +30,8 @@ export default function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/runs/:runId" element={<RunDetail />} />
                     <Route path="/auth/callback" element={<AuthCallback />} />
-                    <Route path="/auth/silent_renew" element={<SilentRenew />} />
+                    <Route path="/auth/silent-renew" element={<SilentRenew />} />
+                    <Route path="*" element={<NotFound />} />
                   </Routes>
                 </AuthHelper>
               </AuthProvider>

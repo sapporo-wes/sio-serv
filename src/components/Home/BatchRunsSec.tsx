@@ -16,9 +16,10 @@ import theme from "@/theme"
 
 export interface BatchRunsSecProps {
   sx?: SxProps
+  setTabIndex: (index: number) => void
 }
 
-export default function BatchRunsSec({ sx }: BatchRunsSecProps) {
+export default function BatchRunsSec({ sx, setTabIndex }: BatchRunsSecProps) {
   const auth = useAuth()
   const { showBoundary } = useErrorBoundary()
   const uiTable = useRecoilValue(uiTableAtom)
@@ -102,6 +103,7 @@ export default function BatchRunsSec({ sx }: BatchRunsSecProps) {
       setExecutedRunIds(runIds)
       setShowBatchRunsOnly(true)
       setExecuting(false)
+      setTabIndex(3)
     }).catch((e) => {
       showBoundary(e)
     })

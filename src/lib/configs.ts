@@ -1,4 +1,5 @@
 import Ajv from "ajv"
+import Papa from "papaparse"
 
 import { UITableRow, UITableRowSchema, JSONSchema } from "@/types/configs"
 
@@ -10,37 +11,52 @@ export const validateJSONSchema = (schema: JSONSchema): void => {
   }
 }
 
-export const UI_TABLE_HEADER = ["Parameter Key", "Title", "Description", "UI Component Type", "Default", "Required", "Editable"]
+export const UI_TABLE_HEADER = [
+  "Parameter Key",
+  "Title",
+  "Description",
+  "UI Component Type",
+  "Default",
+  "Required",
+  "Editable",
+]
 
 export const schemaToUITable = (schema: JSONSchema, parentPath = ""): UITableRow[] => {
   const rows: UITableRow[] = []
-
   if (schema.type === "object" && schema.properties !== undefined) {
     const requiredFields = new Set(schema.required ?? [])
     for (const [key, value] of Object.entries(schema.properties!) as [string, JSONSchema][]) {
       const jsonPath = parentPath !== "" ? `${parentPath}.${key}` : key
       if (value.type !== "object") {
-        if (value.type === "null") {
-          continue // TODO: handle null type, if needed
-        }
-        // TODO: handle type written as array, e.g. ["string", "number"]
         const type = value.type
+        // JSONSchema7TypeName = "string" | "number" | "integer" | "boolean" | "object" | "array" | "null"
+        if (typeof type !== "string" || !["string", "number", "integer", "boolean", "array"].includes(type)) {
+          throw new Error(`Invalid JSON schema: ${jsonPath} has unsupported type: ${type}, sio-serv only supports "string", "number", "integer", "boolean", and "array"`)
+        }
         const required = requiredFields.has(key)
         const defaultValue = (() => {
           const val = value.default ?? value.const ?? undefined
           if (val === undefined) return ""
           if (type === "string") return String(val)
-          if (type === "number") return Number(val)
+          if (type === "number" || type === "integer") return Number(val)
           if (type === "boolean") return Boolean(val)
           if (type === "array") return JSON.stringify(val)
           return ""
         })()
-        const title = value.title ?? ""
+        const title = value.title ?? jsonPath
         const description = value.description ?? ""
 
         const { success, data, error } = UITableRowSchema.safeParse({
           jsonPath,
-          type: type === "array" ? "string" : type,
+          type: (() => {
+            if (type === "array") {
+              return "string"
+            }
+            if (type === "number" || type === "integer") {
+              return "number"
+            }
+            return type
+          })(),
           required,
           default: defaultValue,
           title,
@@ -61,45 +77,49 @@ export const schemaToUITable = (schema: JSONSchema, parentPath = ""): UITableRow
   return rows
 }
 
-const isTsvFile = (headerRow: string): boolean => {
-  return headerRow.includes("\t")
-}
-
 export const loadUITable = (uiTableContent: string): UITableRow[] => {
-  const row = uiTableContent.split("\n")
-  const delimiter = isTsvFile(row[0]) ? "\t" : ","
-  const header = row[0].split(delimiter)
+  const { data, errors } = Papa.parse<string[]>(uiTableContent, {
+    header: false,
+    skipEmptyLines: true,
+  })
+
+  if (errors.length > 0) {
+    throw new Error(`Invalid UI Table file: ${errors.map((e) => e.message).join(", ")}`)
+  }
+
+  const header = data[0]
   header.forEach((col, i) => {
     if (col !== UI_TABLE_HEADER[i]) {
       throw new Error(`Invalid UI Table file: header mismatch at column ${i + 1}: ${col}`)
     }
   })
-  return row.slice(1).map((line, i) => {
-    if (line === "") return null
-    const cols = line.split(delimiter)
+
+  return data.slice(1).map((cols, i) => {
     if (cols.length !== header.length) {
       throw new Error(`Invalid UI Table file: row length mismatch at row ${i + 2}: ${cols[0] ?? "<empty>"}`)
     }
-    const typeValue = cols[3]
+    const [jsonPath, title, description, typeValue, tmpDefaultValue, required, editable] = cols
     const defaultValue = (() => {
-      if (typeValue === "string") return cols[4]
-      if (typeValue === "number") return JSON.parse(cols[4])
-      if (typeValue === "boolean") return JSON.parse(cols[4])
+      if (typeValue === "string") return tmpDefaultValue
+      if (typeValue === "number") return isNaN(Number(tmpDefaultValue)) ? tmpDefaultValue : Number(tmpDefaultValue)
+      if (typeValue === "boolean") return tmpDefaultValue.toLowerCase() === "true" ? true : tmpDefaultValue.toLowerCase() === "false" ? false : tmpDefaultValue
     })()
+
     const { success, data, error } = UITableRowSchema.safeParse({
-      jsonPath: cols[0],
-      title: cols[1],
-      description: cols[2],
+      jsonPath,
+      title,
+      description,
       type: typeValue,
       default: defaultValue,
-      required: JSON.parse(cols[5]),
-      editable: JSON.parse(cols[6]),
+      required: JSON.parse(required),
+      editable: JSON.parse(editable),
     })
     if (!success) {
       throw new Error(`Invalid UI Table file: at row ${i + 2}: ${error.message}`)
     }
+
     return data
-  }).filter((row) => row !== null)
+  })
 }
 
 export const validateInputtedUITable = (inputtedUITable: UITableRow[], uiTableFromSchema: UITableRow[]) => {
@@ -144,13 +164,21 @@ export const convertToSchemaForForm = (uiTable: UITableRow[]): JSONSchema => {
 }
 
 const batchTemplateHeader = (uiTable: UITableRow[]): string[] => {
-  return uiTable.map((row) => `"${row.title} (${row.type}${row.required ? "; required" : ""})"`)
+  return uiTable.map((row) => `${row.title} (${row.type}${row.required ? "; required" : ""})`)
 }
 
 export const convertToBatchTemplate = (uiTable: UITableRow[]): string => {
   const header = batchTemplateHeader(uiTable)
-  const egRow = uiTable.map((row) => row.default ?? "")
-  return `${header.join(",")}\n${egRow.join(",")}`
+  const exampleRow = uiTable.map((row) => row.default ?? "")
+
+  const csvString = Papa.unparse({
+    fields: header,
+    data: [exampleRow],
+  }, {
+    quotes: true,
+  })
+
+  return csvString
 }
 
 interface ValidationResult {
@@ -160,7 +188,7 @@ interface ValidationResult {
 }
 
 /**
- * Validates the inputted CSB template content against the UI Table.
+ * Validates the inputted CSV template content against the UI Table.
  *
  * The validation includes:
  * 1. Whether the header row is correct
@@ -179,9 +207,20 @@ export const validateInputTemplate = (content: string, uiTable: UITableRow[]): V
     errors: [],
     data: [],
   }
+
   const jsonSchema = convertToSchemaForForm(uiTable)
-  const rows = content.split("\n").filter((line) => line !== "")
-  const inputHeader = rows[0].split(",")
+
+  const { data, errors } = Papa.parse<string[]>(content, {
+    header: false,
+    skipEmptyLines: true,
+  })
+  if (errors.length > 0) {
+    result.errors.push(`Invalid CSV file: ${errors.map((e) => e.message).join(", ")}`)
+    result.success = false
+    return result
+  }
+
+  const [inputHeader, ...rows] = data
   const expectedHeader = batchTemplateHeader(uiTable)
 
   // 1. Validate header row
@@ -189,36 +228,34 @@ export const validateInputTemplate = (content: string, uiTable: UITableRow[]): V
     result.errors.push(`Header Row: Incorrect header format (Expected: ${expectedHeader.join(",")}, Actual: ${inputHeader.join(",")})`)
   }
 
-  for (let i = 1; i < rows.length; i++) {
-    const cols = rows[i].split(",")
-
-    // 2. Validate each row (starting from row 2
+  const ajv = new Ajv()
+  rows.forEach((cols, rowIndex) => {
+    // 2. Validate each row
     if (cols.length !== expectedHeader.length) {
-      result.errors.push(`Row ${i + 1}: Incorrect number of elements`)
-      continue
+      result.errors.push(`Row ${rowIndex + 2}: Incorrect number of elements`)
+      return
     }
 
     // 3. Validate JSON schema
     const wfParams: Record<string, unknown> = {}
-    cols.forEach((col, j) => {
-      if (uiTable[j].type === "number") {
-        wfParams[uiTable[j].jsonPath] = isNaN(Number(col)) ? col : Number(col)
-      } else if (uiTable[j].type === "boolean") {
-        wfParams[uiTable[j].jsonPath] = col === "true" ? true : col === "false" ? false : col
-      } else {
-        wfParams[uiTable[j].jsonPath] = col
+    cols.forEach((col, colIndex) => {
+      if (uiTable[colIndex].type === "number") {
+        wfParams[uiTable[colIndex].jsonPath] = isNaN(Number(col)) ? col : Number(col)
+      } else if (uiTable[colIndex].type === "boolean") {
+        wfParams[uiTable[colIndex].jsonPath] = col.toLowerCase() === "true" ? true : col.toLowerCase() === "false" ? false : col
+      } else { // string
+        wfParams[uiTable[colIndex].jsonPath] = col
       }
     })
-    const ajv = new Ajv()
     const valid = ajv.validate(jsonSchema, wfParams)
     if (!valid) {
-      result.errors.push(`Row ${i + 1}: JSONSchema error (Error: ${ajv.errorsText(ajv.errors)})`)
+      result.errors.push(`Row ${rowIndex + 2}: JSONSchema error (Error: ${ajv.errorsText(ajv.errors)})`)
     } else {
       result.data.push(wfParams)
     }
-  }
+  })
 
-  if ((result.errors ?? []).length > 0) {
+  if (result.errors.length > 0) {
     result.success = false
   }
 
