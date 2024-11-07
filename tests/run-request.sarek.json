@@ -1,0 +1,6 @@
+{
+  "workflow_type": "NFL",
+  "workflow_type_version": "DSL2",
+  "workflow_engine": "nf-core-runner",
+  "workflow_url": "https://github.com/nf-core/sarek/tree/3.4.4"
+}

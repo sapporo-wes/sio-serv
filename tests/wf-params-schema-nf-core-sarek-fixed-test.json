@@ -1,0 +1,295 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "$id": "https://raw.githubusercontent.com/nf-core/sarek/master/nextflow_schema.json",
+  "title": "nf-core/sarek pipeline parameters",
+  "description": "An open-source analysis pipeline to detect germline or somatic variants from whole genome or targeted sequencing",
+  "type": "object",
+  "required": [
+    "step"
+  ],
+  "properties": {
+    "input": {
+      "description": "Path to comma-separated file containing information about the samples in the experiment.",
+      "type": "string",
+      "format": "file-path",
+      "exists": true,
+      "schema": "assets/schema_input.json",
+      "mimetype": "text/csv",
+      "pattern": "^\\S+\\.csv$",
+      "title": "--input",
+      "default": "${projectDir}/tests/csv/3.0/fastq_single.csv"
+    },
+    "step": {
+      "type": "string",
+      "default": "mapping",
+      "description": "Starting step",
+      "enum": [
+        "mapping",
+        "markduplicates",
+        "prepare_recalibration",
+        "recalibrate",
+        "variant_calling",
+        "annotate"
+      ],
+      "title": "--step"
+    },
+    "split_fastq": {
+      "type": "integer",
+      "default": 0,
+      "description": "Specify how many reads each split of a FastQ file contains. Set 0 to turn off splitting at all.",
+      "title": "--split_fastq"
+    },
+    "wes": {
+      "type": "boolean",
+      "description": "Enable when exome or panel data is provided.",
+      "title": "--wes"
+    },
+    "intervals": {
+      "type": "string",
+      "description": "Path to target bed file in case of whole exome or targeted sequencing or intervals file.",
+      "title": "--intervals"
+    },
+    "nucleotides_per_second": {
+      "type": "integer",
+      "description": "Estimate interval size.",
+      "default": 200000,
+      "title": "--nucleotides_per_second"
+    },
+    "no_intervals": {
+      "type": "boolean",
+      "description": "Disable usage of intervals.",
+      "title": "--no_intervals"
+    },
+    "tools": {
+      "type": "string",
+      "description": "Tools to use for duplicate marking, variant calling and/or for annotation.",
+      "pattern": "^((ascat|bcfann|cnvkit|controlfreec|deepvariant|freebayes|haplotypecaller|sentieon_dnascope|sentieon_haplotyper|manta|merge|mpileup|msisensorpro|mutect2|ngscheckmate|sentieon_dedup|snpeff|strelka|tiddit|vep)?,?)*(?<!,)$",
+      "title": "--tools",
+      "default": "strelka"
+    },
+    "skip_tools": {
+      "type": "string",
+      "description": "Disable specified tools.",
+      "pattern": "^((baserecalibrator|baserecalibrator_report|bcftools|dnascope_filter|documentation|fastqc|haplotypecaller_filter|haplotyper_filter|markduplicates|markduplicates_report|mosdepth|multiqc|samtools|vcftools|versions)?,?)*(?<!,)$",
+      "title": "--skip_tools"
+    },
+    "trim_fastq": {
+      "type": "boolean",
+      "description": "Run FastP for read trimming",
+      "title": "--trim_fastq"
+    },
+    "umi_read_structure": {
+      "type": "string",
+      "description": "Specify UMI read structure",
+      "title": "--umi_read_structure"
+    },
+    "aligner": {
+      "type": "string",
+      "default": "bwa-mem",
+      "enum": [
+        "bwa-mem",
+        "bwa-mem2",
+        "dragmap",
+        "sentieon-bwamem"
+      ],
+      "description": "Specify aligner to be used to map reads to reference genome.",
+      "title": "--aligner"
+    },
+    "save_mapped": {
+      "type": "boolean",
+      "description": "Save mapped files.",
+      "title": "--save_mapped"
+    },
+    "save_output_as_bam": {
+      "type": "boolean",
+      "description": "Saves output from mapping (if `--save_mapped`), Markduplicates & Baserecalibration as BAM file instead of CRAM",
+      "title": "--save_output_as_bam"
+    },
+    "use_gatk_spark": {
+      "type": "string",
+      "description": "Enable usage of GATK Spark implementation for duplicate marking and/or base quality score recalibration",
+      "pattern": "^((baserecalibrator|markduplicates)?,?)*(?<!,)$",
+      "title": "--use_gatk_spark"
+    },
+    "concatenate_vcfs": {
+      "type": "boolean",
+      "description": "Option for concatenating germline vcf-files.",
+      "title": "--concatenate_vcfs"
+    },
+    "only_paired_variant_calling": {
+      "type": "boolean",
+      "description": "If true, skips germline variant calling for matched normal to tumor sample. Normal samples without matched tumor will still be processed through germline variant calling tools.",
+      "title": "--only_paired_variant_calling"
+    },
+    "joint_germline": {
+      "type": "boolean",
+      "description": "Turn on the joint germline variant calling for GATK haplotypecaller",
+      "title": "--joint_germline"
+    },
+    "joint_mutect2": {
+      "type": "boolean",
+      "description": "Runs Mutect2 in joint (multi-sample) mode for better concordance among variant calls of tumor samples from the same patient. Mutect2 outputs will be stored in a subfolder named with patient ID under `variant_calling/mutect2/` folder. Only a single normal sample per patient is allowed. Tumor-only mode is also supported.",
+      "title": "--joint_mutect2"
+    },
+    "vep_custom_args": {
+      "type": "string",
+      "default": "--everything --filter_common --per_gene --total_length --offline --format vcf",
+      "description": "Add an extra custom argument to VEP.",
+      "title": "--vep_custom_args"
+    },
+    "vep_version": {
+      "type": "string",
+      "default": "111.0-0",
+      "description": "Should reflect the VEP version used in the container.",
+      "title": "--vep_version"
+    },
+    "bcftools_annotations": {
+      "type": "string",
+      "description": "A vcf file containing custom annotations to be used with bcftools annotate. Needs to be bgzipped.",
+      "title": "--bcftools_annotations",
+      "default": "s3://ngi-igenomes/testdata/nf-core/modules/genomics/sarscov2/illumina/vcf/test2.vcf.gz"
+    },
+    "bcftools_annotations_tbi": {
+      "type": "string",
+      "description": "Index file for `bcftools_annotations`",
+      "title": "--bcftools_annotations_tbi",
+      "default": "s3://ngi-igenomes/testdata/nf-core/modules/genomics/sarscov2/illumina/vcf/test2.vcf.gz.tbi"
+    },
+    "bcftools_header_lines": {
+      "type": "string",
+      "description": "Text file with the header lines of `bcftools_annotations`",
+      "title": "--bcftools_header_lines",
+      "default": "${projectDir}/tests/config/bcfann_test_header.txt"
+    },
+    "genome": {
+      "type": "string",
+      "description": "Name of iGenomes reference.",
+      "default": "testdata.nf-core.sarek",
+      "title": "--genome"
+    },
+    "dbsnp_vqsr": {
+      "type": "string",
+      "description": "label string for VariantRecalibration (haplotypecaller joint variant calling)",
+      "title": "--dbsnp_vqsr"
+    },
+    "fasta": {
+      "type": "string",
+      "format": "file-path",
+      "exists": true,
+      "mimetype": "text/plain",
+      "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$",
+      "description": "Path to FASTA genome file.",
+      "title": "--fasta"
+    },
+    "fasta_fai": {
+      "type": "string",
+      "description": "Path to FASTA reference index.",
+      "title": "--fasta_fai"
+    },
+    "known_indels_vqsr": {
+      "type": "string",
+      "description": "If you use AWS iGenomes, this has already been set for you appropriately.\n\n1st label string for VariantRecalibration (haplotypecaller joint variant calling)",
+      "title": "--known_indels_vqsr"
+    },
+    "known_snps": {
+      "type": "string",
+      "description": "If you use AWS iGenomes, this has already been set for you appropriately.\n\nPath to known snps file.",
+      "title": "--known_snps"
+    },
+    "known_snps_tbi": {
+      "type": "string",
+      "description": "Path to known snps file snps.",
+      "title": "--known_snps_tbi"
+    },
+    "known_snps_vqsr": {
+      "type": "string",
+      "description": "If you use AWS iGenomes, this has already been set for you appropriately.\n\nlabel string for VariantRecalibration (haplotypecaller joint variant calling)",
+      "title": "--known_snps_vqsr"
+    },
+    "ngscheckmate_bed": {
+      "type": "string",
+      "description": "Path to SNP bed file for sample checking with NGSCheckMate",
+      "title": "--ngscheckmate_bed"
+    },
+    "snpeff_db": {
+      "type": "string",
+      "description": "snpEff DB version.",
+      "title": "--snpeff_db"
+    },
+    "snpeff_genome": {
+      "type": "string",
+      "description": "snpEff genome.",
+      "title": "--snpeff_genome"
+    },
+    "vep_genome": {
+      "type": "string",
+      "description": "VEP genome.",
+      "title": "--vep_genome"
+    },
+    "vep_species": {
+      "type": "string",
+      "description": "VEP species.",
+      "title": "--vep_species"
+    },
+    "vep_cache_version": {
+      "type": "string",
+      "description": "VEP cache version.",
+      "title": "--vep_cache_version"
+    },
+    "save_reference": {
+      "type": "boolean",
+      "description": "Save built references.",
+      "title": "--save_reference"
+    },
+    "build_only_index": {
+      "type": "boolean",
+      "description": "Only built references.",
+      "title": "--build_only_index"
+    },
+    "download_cache": {
+      "type": "boolean",
+      "description": "Download annotation cache.",
+      "title": "--download_cache"
+    },
+    "igenomes_base": {
+      "type": "string",
+      "format": "directory-path",
+      "description": "Directory / URL base for iGenomes references.",
+      "default": "s3://ngi-igenomes/testdata/nf-core/modules",
+      "title": "--igenomes_base"
+    },
+    "igenomes_ignore": {
+      "type": "boolean",
+      "description": "Do not load the iGenomes reference config.",
+      "title": "--igenomes_ignore"
+    },
+    "vep_cache": {
+      "type": "string",
+      "format": "directory-path",
+      "description": "Path to VEP cache.",
+      "title": "--vep_cache"
+    },
+    "snpeff_cache": {
+      "type": "string",
+      "format": "directory-path",
+      "description": "Path to snpEff cache.",
+      "title": "--snpeff_cache"
+    },
+    "email": {
+      "type": "string",
+      "description": "Email address for completion summary.",
+      "pattern": "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$",
+      "title": "--email"
+    },
+    "multiqc_title": {
+      "type": "string",
+      "description": "MultiQC report title. Printed as page header, used for filename if not otherwise specified.",
+      "title": "--multiqc_title"
+    },
+    "multiqc_methods_description": {
+      "type": "string",
+      "description": "Custom MultiQC yaml file containing HTML including a methods description.",
+      "title": "--multiqc_methods_description"
+    }
+  }
+}

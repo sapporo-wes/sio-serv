@@ -13,9 +13,12 @@ services:
       - SIO_SERV_KEYCLOAK_CLIENT_ID=sio-serv-app
       - SIO_SERV_MINIO_ENDPOINT=http://localhost:9000
       - SIO_SERV_SAPPORO_ENDPOINT=http://localhost:1122
-      - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema.json
-      - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table.csv
-      - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run-request.json
+      # - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema.json
+      # - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table.csv
+      - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema-nf-core-sarek-fixed-test.json
+      - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table-nf-core-sarek-fixed-test.csv
+      # - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run-request.json
+      - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run-request.sarek.json
     ports:
       - 127.0.0.1:3000:3000
     restart: on-failure

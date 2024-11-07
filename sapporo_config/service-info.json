@@ -69,6 +69,11 @@
       "workflow_engine_version": [
         "0.1.3"
       ]
+    },
+    "nf-core-runner": {
+      "workflow_engine_version": [
+        "1.0.0"
+      ]
     }
   },
   "default_workflow_engine_parameters": {

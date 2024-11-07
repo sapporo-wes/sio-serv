@@ -123,6 +123,17 @@ function run_streamflow() {
     eval ${cmd_txt} || executor_error
 }
 
+function run_nf-core-runner() {
+    local container="nextflow/nextflow:24.10.0"
+    local version="${wf_url##*/}"
+    local repo_url="${wf_url%/tree/*}"
+
+    local cmd_txt="docker run --rm ${D_SOCK} -v ${run_dir}:${run_dir} -w=${exe_dir} ${container} nextflow run ${repo_url} -r ${version} ${wf_engine_params} -params-file ${wf_params} --outdir ${outputs_dir} -work-dir ${exe_dir} -profile docker 1>${stdout} 2>${stderr}"
+    find ${exe_dir} -type f -exec chmod 777 {} \;
+    echo ${cmd_txt} >${cmd}
+    eval ${cmd_txt} || executor_error
+}
+
 function cancel() {
     # Edit this function for environment-specific cancellation procedures
     if [[ ${wf_engine} == "cwltool" ]]; then
