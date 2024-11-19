@@ -1,0 +1,34 @@
+{
+  "type": "object",
+  "properties": {
+    "genotype_imputation_panel": {
+      "type": "string",
+      "title": "Parameter1: Genotype Imputation Panel",
+      "enum": [
+        "multi-ancestry-panel-grch37",
+        "test-multi-ancestry-panel-grch37",
+        "east-asian-ancestry-panel-grch37",
+        "multi-ancestry-panel-grch38",
+        "test-multi-ancestry-panel-grch38",
+        "east-asian-ancestry-panel-grch38"
+      ],
+      "default": "multi-ancestry-panel-grch37"
+    },
+    "target_vcf": {
+      "type": "string",
+      "title": "Parameter2: Target VCF File",
+      "description": "Please specify the target VCF file for imputation (How to prepare a target VCF file; TODO link here)"
+    },
+    "output_genotype_probability": {
+      "type": "boolean",
+      "title": "Parameter3: Output Genotype Probability",
+      "description": "Please specify whether the posterior probability of possible genotypes is included in the output VCF file (default is false)",
+      "default": false
+    }
+  },
+  "required": [
+    "genotype_imputation_panel",
+    "target_vcf",
+    "output_genotype_probability"
+  ]
+}

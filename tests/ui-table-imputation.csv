@@ -1,0 +1,4 @@
+"Parameter Key","Title","Description","UI Component Type","Default","Required","Editable"
+"genotype_imputation_panel","Parameter1: Genotype Imputation Panel","","string","multi-ancestry-panel-grch37","true","true"
+"target_vcf","Parameter2: Target VCF File","Please specify the target VCF file for imputation (How to prepare a target VCF file; TODO link here)","string","","true","true"
+"output_genotype_probability","Parameter3: Output Genotype Probability","Please specify whether the posterior probability of possible genotypes is included in the output VCF file (default is false)","boolean","false","true","true"

@@ -1,0 +1,5 @@
+{
+  "workflow_type": "CWL",
+  "workflow_engine": "cwltool",
+  "workflow_url": "https://gist.githubusercontent.com/manabuishii/6a92576b0491e35c2275b34d9f16aa0a/raw/1eed9357f18a1e4d0786ab6d795d80a167496617/packed.beagle-imputation-scatter-region.cwl"
+}

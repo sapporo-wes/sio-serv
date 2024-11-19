@@ -22,6 +22,9 @@ const uiSchema = {
   "ui:submitButtonOptions": {
     norender: true,
   },
+  "genotype_imputation_panel": {
+    "ui:widget": "ImputationPanelWidget",
+  },
 }
 
 export default function SingleRunSec({ sx }: SingleRunSecProps) {
@@ -37,6 +40,7 @@ export default function SingleRunSec({ sx }: SingleRunSecProps) {
 
   const execWf = async () => {
     setBtnDisabled(true)
+    // TODO: write wfParams to cwl wf params here!!
     postRuns(runRequestFile, jsonPathToNest(wfParams), auth.user!.access_token).then((runId) => {
       setBtnDisabled(false)
       navigate(`/runs/${runId.run_id}`)

@@ -9,14 +9,23 @@
 import { withTheme, ThemeProps } from "@rjsf/core"
 import { Theme as MuiTheme } from "@rjsf/mui"
 
+import BaseInputTemplate from "@/components/Form/BaseInputTemplate"
 import CheckboxWidget from "@/components/Form/CheckboxWidget"
+import DescriptionField from "@/components/Form/DescriptionField"
+import FieldTemplate from "@/components/Form/FieldTemplate"
+import ImputationPanelWidget from "@/components/Form/ImputationPanelWidget"
 
 const Theme: ThemeProps = {
   // @ts-expect-error: templates never to be undefined
-  templates: Object.assign(MuiTheme.templates, {}),
+  templates: Object.assign(MuiTheme.templates, {
+    BaseInputTemplate,
+    DescriptionFieldTemplate: DescriptionField,
+    FieldTemplate,
+  }),
   // @ts-expect-error: templates never to be undefined
   widgets: Object.assign(MuiTheme.widgets, {
     CheckboxWidget,
+    ImputationPanelWidget,
   }),
   fields: {},
 }
