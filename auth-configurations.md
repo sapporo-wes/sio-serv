@@ -139,7 +139,7 @@ For more information about this configuration file, please refer to the sapporo-
 
 ## sio-serv Auth. Configuration
 
-The authentication settings for sio-serv are defined in [./sapporo_config/auth_config.json](./sapporo_config/auth_config.json) as shown below.
+The authentication settings for sio-serv are defined in [./compose.yml](./compose.yml) as shown below.
 
 ```yaml
       - SIO_SERV_KEYCLOAK_REALM_URL=http://localhost:8080/realms/sio-serv
