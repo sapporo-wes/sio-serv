@@ -16,6 +16,7 @@ services:
       - SIO_SERV_WF_PARAMS_SCHEMA_FILE=/app/tests/wf-params-schema.json
       - SIO_SERV_UI_TABLE_FILE=/app/tests/ui-table.csv
       - SIO_SERV_RUN_REQUEST_FILE=/app/tests/run-request.json
+      # - SIO_SERV_BASE_PATH=/something-wf/
     ports:
       - 127.0.0.1:3000:3000
     restart: on-failure

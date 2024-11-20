@@ -58,4 +58,5 @@ export default defineConfig({
     MINIO_ENDPOINT: JSON.stringify(process.env.SIO_SERV_MINIO_ENDPOINT || "http://localhost:9000"),
     SAPPORO_ENDPOINT: JSON.stringify(process.env.SIO_SERV_SAPPORO_ENDPOINT || "http://localhost:1122"),
   },
+  base: process.env.SIO_SERV_BASE_PATH || "/",
 })
